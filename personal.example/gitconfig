@@ -1,0 +1,4 @@
+# Linked to ~/.gitconfig.local; home/.gitconfig includes it.
+[user]
+	name = Your Name
+	email = you@example.com

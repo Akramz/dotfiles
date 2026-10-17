@@ -1,0 +1,43 @@
+# Ghostty — symlinked to
+#   ~/Library/Application Support/com.mitchellh.ghostty/config
+# Reload in place with cmd+shift+comma.
+
+theme = Dracula
+font-size = 13
+split-divider-color = #d0d0d0
+
+# Resize the focused split with cmd+ctrl+<arrow>.
+keybind = cmd+ctrl+up=resize_split:up,20
+keybind = cmd+ctrl+down=resize_split:down,20
+keybind = cmd+ctrl+left=resize_split:left,20
+keybind = cmd+ctrl+right=resize_split:right,20
+
+# Move between tmux panes with cmd+shift+left/right; tmux binds these
+# sequences as User0/User1 (home/.tmux.conf).
+keybind = cmd+shift+left=text:\x1b[9001~
+keybind = cmd+shift+right=text:\x1b[9002~
+
+# shift+enter must reach the agent CLIs as a newline, not a submit.
+keybind = shift+enter=text:\x1b[13;2u
+
+# Quick terminal: ctrl+space anywhere brings up a fullscreen Ghostty on the
+# main display. `initial-window = false` + `macos-hidden = always` mean Ghostty
+# is *only* ever the quick terminal — no dock icon, no window on launch. This
+# is the whole terminal workflow. Drop these two and Ghostty looks broken on
+# first run (launches, shows nothing).
+keybind = global:ctrl+space=toggle_quick_terminal
+quick-terminal-space-behavior = move
+quick-terminal-screen = main
+quick-terminal-position = center
+quick-terminal-size = 100%,100%
+quick-terminal-animation-duration = 0
+quick-terminal-autohide = false
+initial-window = false
+macos-hidden = always
+
+shell-integration-features = ssh-env
+macos-non-native-fullscreen = true
+
+# Agents run for minutes at a time; no bells, no completion banners.
+notify-on-command-finish = never
+bell-features = no-attention

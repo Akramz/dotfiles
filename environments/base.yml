@@ -1,0 +1,83 @@
+# Miniforge `base` — the tools that should be importable from any shell.
+#
+#   conda env update -n base -f environments/base.yml
+#
+# This is a CURATED list, not a lock file. The source machine's base env had
+# 454 packages, almost all pulled in transitively by pip; reproducing it
+# exactly would be both fragile and pointless.
+#
+# Per-project dependencies do NOT belong here. Every project repo carries its
+# own environment.yml; create those with `mamba env create -f environment.yml`.
+# Editable installs of your own packages come from their repos too, not from
+# this file.
+
+name: base
+channels:
+  - conda-forge
+
+dependencies:
+  - python=3.12
+  - mamba
+  - pip
+
+  # scientific core
+  - numpy
+  - pandas
+  - scipy
+  - matplotlib
+  - scikit-learn
+
+  # notebooks and small apps
+  - jupyterlab
+  - ipykernel
+  - marimo
+  - solara
+
+  # geospatial — conda-forge, never pip: these need C libraries (GDAL, GEOS,
+  # PROJ) that pip wheels get wrong on macOS often enough to matter
+  - gdal
+  - geopandas
+  - rasterio
+  - fiona
+  - pyproj
+  - shapely
+  - rioxarray
+  - xarray
+  - rtree
+  - odc-stac
+  - pystac-client
+  - planetary-computer
+  - geemap
+
+  # modelling
+  - lightgbm
+  - optuna
+
+  # viz
+  - altair
+
+  # code quality
+  - ruff
+  - pytest
+
+  # packaging / scaffolding
+  - python-build
+  - twine
+  - wheel
+  - bump2version
+  - cookiecutter
+
+  # documents
+  - python-pptx
+  - pypdf
+
+  # terminal UIs
+  - textual
+
+  - pip:
+      # not on conda-forge, or fresher on PyPI
+      - azure-ai-ml
+      - azureml-core
+      - rio-cogeo
+      - titiler-core
+      - geedim

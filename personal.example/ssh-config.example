@@ -1,0 +1,25 @@
+# Shape of ~/.ssh/config: save as personal/ssh-config. See README.md in this folder.
+
+# OrbStack inserts this itself on install; it must stay above every Host block.
+Include ~/.orbstack/ssh/config
+
+Host gpu-box
+  HostName <host-or-ip>
+  Port 22
+  User <your-user>
+  IdentityFile ~/.ssh/<key>.pem
+
+# A second GitHub account on its own key: clone with git@github-personal:<owner>/<repo>.git
+# Host github-personal
+#   HostName github.com
+#   User git
+#   IdentityFile ~/.ssh/<personal-key>
+
+# An Azure ML compute instance gets a new public IP on every stop/start, so
+# resolve the address at connect time. Needs `az login` and `az extension add -n ml`.
+# Host aml-vm
+#   HostName <instance-name>
+#   User azureuser
+#   IdentityFile ~/.ssh/<key>.pem
+#   StrictHostKeyChecking accept-new
+#   ProxyCommand nc "$(az ml compute show -n <instance-name> -g <resource-group> -w <workspace> --query network_settings.public_ip_address -o tsv 2>/dev/null)" 50000

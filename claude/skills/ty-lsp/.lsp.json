@@ -1,0 +1,7 @@
+{
+  "ty": {
+    "command": "sh",
+    "args": ["-c", "PATH=\"$CLAUDE_PROJECT_DIR/.venv/bin:$PATH\" exec ty server"],
+    "extensionToLanguage": { ".py": "python", ".pyi": "python" }
+  }
+}

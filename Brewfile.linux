@@ -1,0 +1,63 @@
+# Brewfile.linux — the Linux subset of Brewfile.general.
+#
+#   brew bundle install --file=Brewfile.linux
+#   brew bundle check   --file=Brewfile.linux
+#
+# Homebrew lives at /home/linuxbrew/.linuxbrew (install.sh's `brew` stage).
+# Casks do not exist on Linux, so this is formulae only, and it is a curated
+# subset: parity with the Mac for the CLI tools that matter, nothing a Linux
+# box already gets from apt.
+#
+# On a distro older than Homebrew's bottle baseline (glibc 2.35+) the first
+# install also pulls brew's own glibc + gcc: ~1 GB, a few minutes, and a
+# permanent `brew doctor` warning. Harmless.
+#
+# Deliberately absent, and why:
+#   zsh, git         apt: the login shell must live in /etc/shells, and
+#                    distro git is fine
+#   node             usually already on a Linux box; a brew node would shadow
+#                    it and split npm globals across two prefixes
+#   rbenv, llvm, esbuild, osmium-tool, pmtiles, caddy
+#                    Mac-workflow tools with no job on a server
+#   llama.cpp        build it with CUDA yourself when needed; brew's is CPU-only
+
+# ── shell + terminal ────────────────────────────────────────────
+brew "tmux"               # distro tmux is often < 3.3 (no extended-keys/csi-u)
+brew "fzf"
+brew "autojump"           # provides `j`; .zshrc aliases z=j (no Linux bottle: builds from source)
+brew "ripgrep"
+brew "htop"
+
+# ── git ─────────────────────────────────────────────────────────
+brew "gh"                 # also the git credential helper (see home/.gitconfig)
+brew "difftastic"         # git dft
+brew "hunk"               # review-first terminal diff viewer; skill: claude/skills/hunk
+
+# ── languages / runtimes ────────────────────────────────────────
+brew "uv"                 # Python tools and envs
+brew "ty"                 # Python type checker for the claude/skills/ty-lsp plugin
+brew "go"
+brew "cmake"
+
+# ── documents & media ───────────────────────────────────────────
+brew "pandoc"
+brew "graphviz"
+brew "imagemagick"
+brew "poppler"
+brew "ffmpeg"
+brew "yt-dlp"
+
+# ── cloud ───────────────────────────────────────────────────────
+brew "awscli"
+brew "gogcli"             # Google for agents; no Linux bottle, builds from source
+
+# ── GPU ─────────────────────────────────────────────────────────
+brew "nvtop"              # brew's dlopens the driver's libnvidia-ml; distro nvtop drags in libnvidia-compute-*
+
+# ── misc utilities ──────────────────────────────────────────────
+brew "wget"
+brew "aria2"
+brew "nmap"
+brew "unar"
+brew "age"                # file encryption
+brew "jq"

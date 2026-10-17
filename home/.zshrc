@@ -1,0 +1,154 @@
+# Homebrew: /opt/homebrew on the Mac, /home/linuxbrew/.linuxbrew on Linux.
+for _brew in /opt/homebrew/bin/brew /home/linuxbrew/.linuxbrew/bin/brew; do
+  [[ -x $_brew ]] && { eval "$($_brew shellenv)"; break; }
+done; unset _brew
+
+# oh-my-zsh. Themes: https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
+export ZSH="$HOME/.oh-my-zsh"
+ZSH_THEME="robbyrussell"
+plugins=(git zsh-autosuggestions autojump tmux)
+
+source $ZSH/oh-my-zsh.sh
+
+export CONDA_CHANGEPS1=false
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+# Paths use $HOME so this file is portable. `conda init zsh` rewrites them
+# as absolute paths; re-apply $HOME if it does.
+__conda_setup="$("$HOME/miniforge3/bin/conda" 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "$HOME/miniforge3/etc/profile.d/conda.sh" ]; then
+        . "$HOME/miniforge3/etc/profile.d/conda.sh"
+    else
+        export PATH="$HOME/miniforge3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+
+export MAMBA_ROOT_PREFIX="$HOME/miniforge3"
+if [ -f "$HOME/miniforge3/etc/profile.d/mamba.sh" ]; then
+    . "$HOME/miniforge3/etc/profile.d/mamba.sh"
+fi
+# <<< conda initialize <<<
+
+# Customizing ZSH prompt to include the active Conda environment
+PROMPT='$(conda_prompt_info)%~ %# '
+# Over ssh, show the host so a remote shell is never mistaken for the local one.
+[[ -n $SSH_CONNECTION ]] && PROMPT='$(conda_prompt_info)%m:%~ %# '
+
+# Function to display Conda environment
+conda_prompt_info() {
+    if [ -n "$CONDA_DEFAULT_ENV" ]; then
+        echo "($CONDA_DEFAULT_ENV) "
+    fi
+}
+
+command -v rbenv >/dev/null && eval "$(rbenv init -)"
+alias tnew='tmux new-session -s'
+alias tls='tmux list-sessions'
+alias tattach='tmux attach-session -t'
+alias tkill='tmux kill-session -t'
+# _tp_new_claude — create a claude session in DIR and enter it. Sessions run in
+# the checkout as it stands; nothing here creates a worktree or a branch.
+_tp_new_claude() {
+  local name="$1" dir="${2:-$PWD}" cmd
+  cmd='claude --permission-mode auto'
+
+  if [[ -n $TMUX ]]; then
+    command tmux new-session -d -s "$name" -c "$dir" "$cmd" \
+      && command tmux switch-client -t "$name"
+  else
+    command tmux new-session -s "$name" -c "$dir" "$cmd"
+  fi
+}
+# _tp_new_copilot — create a Copilot CLI session in DIR (nesting-aware) and enter it
+_tp_new_copilot() {
+  local name="$1" dir="${2:-$PWD}"
+  if [[ -n $TMUX ]]; then
+    command tmux new-session -d -s "$name" -c "$dir" 'copilot --autopilot --yolo' \
+      && command tmux switch-client -t "$name"
+  else
+    command tmux new-session -s "$name" -c "$dir" 'copilot --autopilot --yolo'
+  fi
+}
+# _tp_new_codex — create a codex session in DIR (nesting-aware) and enter it
+_tp_new_codex() {
+  local name="$1" dir="${2:-$PWD}"
+  if [[ -n $TMUX ]]; then
+    command tmux new-session -d -s "$name" -c "$dir" 'codex' \
+      && command tmux switch-client -t "$name"
+  else
+    command tmux new-session -s "$name" -c "$dir" 'codex'
+  fi
+}
+# tp [name] — project-grouped tmux session picker (TUI: ~/.config/tp/tp_tui.py)
+# with a name: attach if that session exists, else open the picker filtered by it
+tp() {
+  local tmpf action
+  if [[ -n $* ]] && command tmux has-session -t "=$*" 2>/dev/null; then
+    action="attach"$'\t'"$*"
+  else
+    tmpf=$(command mktemp -t tp.XXXXXX) || return
+    TP_RESULT_FILE="$tmpf" command python3 "$HOME/.config/tp/tp_tui.py" "$@"
+    action="$(<"$tmpf")"
+    command rm -f "$tmpf"
+  fi
+  [[ -z $action ]] && return 0
+  local -a parts
+  parts=("${(@ps:\t:)action}")
+  case "$parts[1]" in
+    attach)
+      if [[ -n $TMUX ]]; then
+        command tmux switch-client -t "$parts[2]"
+      else
+        command tmux attach-session -t "$parts[2]"
+      fi
+      ;;
+    create)
+      _tp_new_copilot "$parts[3]" "$parts[2]"
+      ;;
+  esac
+}
+
+# cld <name>      new Claude session in the current checkout
+cld() {
+  _tp_new_claude "$*" "$PWD"
+}
+oa() {
+  _tp_new_codex "$*"
+}
+pc() {
+  local session_name="${*:-copilot}"
+  _tp_new_copilot "$session_name"
+}
+
+alias fixmouse="printf '\e[?1000l\e[?1002l\e[?1003l\e[?1006l'"
+
+# bun completions
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+alias z=j
+unsetopt AUTO_CD
+
+# Claude Code: use the system rg instead of its bundled one
+export USE_BUILTIN_RIPGREP=0
+export PATH="$PATH:$HOME/go/bin"
+
+# For Claude
+export CLAUDE_CODE_NO_FLICKER=1
+
+# macOS-only bits.
+if [[ $OSTYPE == darwin* ]]; then
+  export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
+  # Revive Ghostty's global ctrl+space hotkey after macOS kills its event tap
+  alias poke-ghostty='bash "$HOME/bin/poke_ghostty.sh"'
+fi
+
+# Your own aliases: personal/zshrc, linked here by install.sh.
+[[ -f "$HOME/.config/zsh/local.zsh" ]] && source "$HOME/.config/zsh/local.zsh"

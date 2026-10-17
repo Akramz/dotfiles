@@ -1,0 +1,9 @@
+# Linked to ~/.config/zsh/local.zshenv; ~/.zshenv sources it.
+# Machine-wide environment: CUDA paths, cache dirs, cloud settings.
+
+# install.sh: change macOS settings without asking.
+# export DOTFILES_YES=1
+
+# /weekly-git-commits: author pattern and repo root (defaults: git user.email, ~/projects).
+# export WEEKLY_GIT_AUTHOR=yourname
+# export WEEKLY_GIT_ROOT="$HOME/projects"

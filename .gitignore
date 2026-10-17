@@ -1,0 +1,14 @@
+# Yours, not the repo's — see personal.example/README.md
+personal/
+.claude/settings.local.json
+
+# Machine-local overrides
+*.local
+
+.DS_Store
+__pycache__/
+*.pyc
+
+# Runtime artifacts
+claude/skills/synced/
+copilot/settings.json.lock

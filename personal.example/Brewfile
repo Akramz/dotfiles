@@ -1,0 +1,3 @@
+# personal/Brewfile — your own apps, on top of Brewfile.general. Mac only.
+#
+# cask "spotify"

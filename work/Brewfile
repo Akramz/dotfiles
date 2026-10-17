@@ -1,0 +1,15 @@
+# work/Brewfile — Microsoft/corporate-only software, on top of Brewfile.general.
+#
+#   brew bundle install --file=work/Brewfile
+#   brew bundle check   --file=work/Brewfile
+#
+# Loaded by install.sh's `brew` stage only when run with --with-work. The
+# managed apps arrive through Company Portal once you enrol; they are not
+# brew-installable — see MANUAL.md §7.
+
+brew "azure-cli"
+
+cask "microsoft-edge"     # work SSO
+cask "microsoft-teams"
+cask "microsoft-office"
+cask "microsoft-azure-storage-explorer"

@@ -1,0 +1,7 @@
+{
+  "renderMarkdown": true,
+  "theme": "default",
+  "logLevel": "all",
+  "defaultPermissionMode": "allow-all",
+  "autoUpdatesChannel": "stable"
+}

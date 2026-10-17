@@ -1,0 +1,3 @@
+# Real secrets stay out of git, private or not.
+secrets.env
+ssh-config

@@ -1,0 +1,108 @@
+# Brewfile.general — everything the Mac setup needs.
+#
+#   brew bundle install --file=Brewfile.general
+#   brew bundle check   --file=Brewfile.general   # is this machine satisfied?
+#
+# Work-only software (Microsoft casks/CLIs) lives in work/Brewfile, installed
+# with --with-work. Your own apps go in personal/Brewfile.
+#
+# Docker comes from OrbStack (a cask below), not the docker formulae.
+
+# ── shell + terminal ────────────────────────────────────────────
+brew "zsh"
+brew "tmux"
+brew "fzf"                # tp's predecessor; still used ad hoc
+brew "autojump"           # provides `j`; .zshrc aliases z=j
+brew "ripgrep"
+brew "htop"
+
+# ── git ─────────────────────────────────────────────────────────
+brew "git"
+brew "gh"                 # also the git credential helper (see home/.gitconfig)
+brew "difftastic"         # git dft
+brew "hunk"               # review-first terminal diff viewer; skill: claude/skills/hunk
+
+# ── languages / runtimes ────────────────────────────────────────
+brew "node"
+brew "uv"                 # Python tools and envs
+brew "ty"                 # Python type checker for the claude/skills/ty-lsp plugin
+brew "go"
+brew "rbenv"
+brew "cmake"
+brew "llvm"
+brew "esbuild"
+
+# ── documents & media ───────────────────────────────────────────
+brew "pandoc"
+brew "graphviz"
+brew "imagemagick"
+brew "poppler"
+brew "ffmpeg"
+brew "yt-dlp"
+
+# ── geospatial ──────────────────────────────────────────────────
+brew "osmium-tool"
+brew "pmtiles"
+
+# ── cloud ───────────────────────────────────────────────────────
+brew "awscli"
+brew "gogcli"             # Google (Gmail, Calendar, Drive) for agents; see the gog skill
+
+# ── local inference ─────────────────────────────────────────────
+brew "llama.cpp"
+brew "nvtop"
+
+# ── misc utilities ──────────────────────────────────────────────
+brew "wget"
+brew "aria2"
+brew "nmap"
+brew "unar"
+brew "age"                # file encryption
+brew "caddy"
+brew "jq"
+
+# ════════════════════════════════════════════════════════════════
+# Casks
+# ════════════════════════════════════════════════════════════════
+
+# ── browsers ────────────────────────────────────────────────────
+cask "google-chrome"      # primary
+
+# ── terminal + editor ───────────────────────────────────────────
+cask "ghostty"
+cask "visual-studio-code"
+
+# ── AI ──────────────────────────────────────────────────────────
+cask "claude"
+cask "chatgpt"
+cask "codex"              # npm's @openai/codex fetches its native binary on
+                           # first run, which Gatekeeper/XProtect has blocked
+                           # as malware; the cask ships a signed release instead
+cask "copilot-cli"        # the `copilot` CLI used by tp / pc
+
+# ── knowledge ───────────────────────────────────────────────────
+cask "obsidian"
+cask "zotero"
+
+# ── comms ───────────────────────────────────────────────────────
+cask "slack"
+cask "zoom"
+
+# ── launcher + input ────────────────────────────────────────────
+cask "raycast"            # bind to cmd+space, see MANUAL.md
+cask "superwhisper"       # dictation
+
+# ── geo ─────────────────────────────────────────────────────────
+cask "qgis"
+
+# ── screen capture ──────────────────────────────────────────────
+cask "kap"
+cask "keycastr"
+
+# ── dev infrastructure ──────────────────────────────────────────
+cask "orbstack"           # Docker replacement; also adds the `orb` ssh host
+cask "mactex-no-gui"      # pdflatex
+cask "gcloud-cli"
+
+# ── office ──────────────────────────────────────────────────────
+cask "libreoffice"

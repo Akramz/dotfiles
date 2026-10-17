@@ -1,0 +1,29 @@
+[merge]
+    conflictstyle = zdiff3
+
+[diff]
+    tool = difftastic
+
+[difftool]
+    prompt = false
+
+[difftool "difftastic"]
+    cmd = difft "$LOCAL" "$REMOTE"
+
+[pager]
+    difftool = true
+
+[alias]
+    dft = difftool
+
+[credential "https://github.com"]
+	helper = 
+	helper = !gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !gh auth git-credential
+
+# Your name and email, and anything else that is yours: personal/gitconfig,
+# linked here by install.sh. Git ignores a missing include.
+[include]
+	path = ~/.gitconfig.local

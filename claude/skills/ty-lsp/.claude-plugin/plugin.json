@@ -1,0 +1,5 @@
+{
+  "name": "ty-lsp",
+  "version": "0.1.0",
+  "description": "ty language server: type errors after each Python edit"
+}
