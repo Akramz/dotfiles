@@ -91,6 +91,7 @@ cask "zoom"
 # ── launcher + input ────────────────────────────────────────────
 cask "raycast"            # bind to cmd+space, see MANUAL.md
 cask "superwhisper"       # dictation
+cask "wispr-flow"         # dictation
 
 # ── geo ─────────────────────────────────────────────────────────
 cask "qgis"

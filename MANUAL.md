@@ -36,7 +36,7 @@ opt+cmd+up/down tab keys. Some of these need a logout.
 macOS will not grant these from a script. Grant them on first launch, or in
 **Privacy & Security**:
 
-- [ ] **Accessibility**: Ghostty (its global ctrl+space needs it), Raycast, superwhisper, KeyCastr
+- [ ] **Accessibility**: Ghostty (its global ctrl+space needs it), Raycast, superwhisper, Wispr Flow, KeyCastr
 - [ ] **Input Monitoring**: superwhisper, KeyCastr
 - [ ] **Screen Recording**: Kap
 - [ ] **Full Disk Access**: Ghostty, VS Code (agents read across the disk)
@@ -45,6 +45,7 @@ macOS will not grant these from a script. Grant them on first launch, or in
 
 - [ ] **Raycast**: bind it to ⌘Space.
 - [ ] **superwhisper**: set the dictation hotkey and download a model (none ship with it).
+- [ ] **Wispr Flow**: sign in and set the dictation hotkey.
 - [ ] **Ghostty**: nothing to do. It opens *no* window on launch; press ctrl+space. If the hotkey dies (macOS disables Ghostty's event tap after a timeout), run `poke-ghostty` instead of relaunching.
 - [ ] **Chrome**: quit and reopen it (cmd+Q) to pick up the tab shortcuts.
 - [ ] **VS Code**: if `install.sh vscode` warned about the `code` CLI, run *Shell Command: Install 'code' command in PATH* from the command palette, then `./install.sh vscode`.
