@@ -171,7 +171,7 @@ link_layer_skills() {
   done
   [[ -f "$exclude" ]] || return 0
   { sed "/^$mark\$/,\$d" "$exclude"; echo "$mark"
-    for dst in "$DOTFILES"/claude/skills/*; do [[ -L "$dst" ]] && echo "claude/skills/${dst##*/}"; done
+    for dst in "$DOTFILES"/claude/skills/*; do if [[ -L "$dst" ]]; then echo "claude/skills/${dst##*/}"; fi; done
   } > "$exclude.new" && mv "$exclude.new" "$exclude"
 }
 
