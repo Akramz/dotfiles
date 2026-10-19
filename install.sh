@@ -113,6 +113,7 @@ LINKS_ALL=(
 
 LINKS_MAC=(
   "home/bin/poke_ghostty.sh|$HOME/bin/poke_ghostty.sh"
+  "home/bin/ghostty_panes.py|$HOME/bin/ghostty_panes.py"
   "config/ghostty/config|$HOME/Library/Application Support/com.mitchellh.ghostty/config"
   "vscode/settings.json|$HOME/Library/Application Support/Code/User/settings.json"
   "vscode/keybindings.json|$HOME/Library/Application Support/Code/User/keybindings.json"

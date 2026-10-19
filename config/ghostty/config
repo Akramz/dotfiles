@@ -17,6 +17,19 @@ keybind = cmd+ctrl+right=resize_split:right,20
 keybind = cmd+shift+left=text:\x1b[9001~
 keybind = cmd+shift+right=text:\x1b[9002~
 
+# opt+shift+<1-9> resizes the quick terminal to that many splits, in an even
+# grid (home/bin/ghostty_panes.py). tmux binds these sequences as User2-User10
+# (home/.tmux.conf); an idle zsh binds them too (home/.zshrc).
+keybind = alt+shift+digit_1=text:\x1b[9011~
+keybind = alt+shift+digit_2=text:\x1b[9012~
+keybind = alt+shift+digit_3=text:\x1b[9013~
+keybind = alt+shift+digit_4=text:\x1b[9014~
+keybind = alt+shift+digit_5=text:\x1b[9015~
+keybind = alt+shift+digit_6=text:\x1b[9016~
+keybind = alt+shift+digit_7=text:\x1b[9017~
+keybind = alt+shift+digit_8=text:\x1b[9018~
+keybind = alt+shift+digit_9=text:\x1b[9019~
+
 # shift+enter must reach the agent CLIs as a newline, not a submit.
 keybind = shift+enter=text:\x1b[13;2u
 

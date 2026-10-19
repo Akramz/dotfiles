@@ -101,6 +101,10 @@ tp() {
   parts=("${(@ps:\t:)action}")
   case "$parts[1]" in
     attach)
+      # Several picks: the rest go to the next Ghostty splits first.
+      if (( $#parts > 2 )) && [[ -x $HOME/bin/ghostty_panes.py ]]; then
+        "$HOME/bin/ghostty_panes.py" open "${(@)parts[3,-1]}"
+      fi
       if [[ -n $TMUX ]]; then
         command tmux switch-client -t "$parts[2]"
       else
@@ -171,6 +175,11 @@ if [[ $OSTYPE == darwin* ]]; then
   export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
   # Revive Ghostty's global ctrl+space hotkey after macOS kills its event tap
   alias poke-ghostty='bash "$HOME/bin/poke_ghostty.sh"'
+  # Opt+Shift+<n> in a split with no tmux: Ghostty sends ESC[901<n>~. Detached
+  # and nohup'd, since resizing may close this very split.
+  _ghostty_panes() { nohup "$HOME/bin/ghostty_panes.py" "${KEYS[6]}" >/dev/null 2>&1 &! }
+  zle -N _ghostty_panes
+  for n in {1..9}; do bindkey "\e[901${n}~" _ghostty_panes; done
 fi
 
 # Your own aliases: personal/zshrc, linked here by install.sh.

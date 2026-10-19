@@ -17,13 +17,15 @@ Interaction (always-on type-to-filter):
   Up/Down       move the cursor (also Ctrl-P/Ctrl-N)
   Right         expand the project under the cursor
   Left          collapse it (on a session, jump to & collapse its project)
-  Enter         project -> name a new Copilot CLI session & enter it
+  Enter         project -> pick sessions to open across Ghostty splits
                 session -> attach to it
+  Ctrl-A        name a new Copilot CLI session in the project & enter it
   Ctrl-D        delete (project = all its sessions; session = just it), confirmed
   Esc / Ctrl-C  quit
 
 The chosen action is written to ``$TP_RESULT_FILE`` for the shell wrapper:
-  attach<TAB><session>
+  attach<TAB><session>[<TAB><session>...]   the first here, the rest in the
+                                            next splits (ghostty_panes.py open)
   create<TAB><project_path><TAB><session_name>
 Deletes are performed here (with confirmation); the picker stays open.
 """
@@ -256,6 +258,9 @@ class UI:
         for name in self.visible_session_names():
             self.status[name] = classify(capture_pane(name))
 
+    def status_label(self, name):
+        return STATUS_LABEL.get(self.status.get(name, "done"), "idle")
+
     # -- rendering --------------------------------------------------------- #
     def render(self):
         scr = self.scr
@@ -285,7 +290,7 @@ class UI:
             y = body_top + (i - self.top)
             self._render_row(y, i, w)
 
-        hint = " arrows move/fold  enter open  ^D delete  type to filter  esc quit"
+        hint = " arrows move/fold  enter open  ^A new  ^D delete  type to filter  esc quit"
         self._addstr(h - 1, 0, hint[:w], curses.A_DIM)
         if self.message:
             self._addstr(h - 2, 0, (" " + self.message)[:w])
@@ -304,7 +309,7 @@ class UI:
                 self._addstr(y, len(label), count[: width - len(label)], curses.A_DIM)
             return
 
-        details = [STATUS_LABEL.get(self.status.get(sess.name, "done"), "idle")]
+        details = [self.status_label(sess.name)]
         if sess.is_current:
             details.append("you")
         elif sess.attached:
@@ -366,7 +371,18 @@ class UI:
         if kind == "session":
             self.action = f"attach{SEP}{sess.name}"
             return "quit"
-        # project -> create (lower-cased, e.g. blog-1, blog-2)
+        names = self.pick_modal(proj, self.shown[proj.path])
+        if not names:
+            return
+        self.action = SEP.join(["attach", *names])
+        return "quit"
+
+    def on_new(self):
+        row = self.cur_row()
+        if not row:
+            return
+        proj = row[1]
+        # lower-cased, e.g. blog-1, blog-2
         base = sanitize(proj.leaf).lower()
         default = next_session_name(base, self.existing_names())
         name = self.text_modal(f"New Copilot CLI session in {proj.display}", default)
@@ -473,6 +489,42 @@ class UI:
             elif ch == curses.KEY_ENTER:
                 return text
 
+    def pick_modal(self, proj, sessions):
+        """Checklist of sessions. Returns the picked names (the one under the
+        cursor when none is ticked), or None if cancelled."""
+        picked, cur, top = set(), 0, 0
+        while True:
+            rows = max(1, self.scr.getmaxyx()[0] - 10)
+            top = min(max(top, cur - rows + 1), cur)
+            lines = [(f"Open sessions of {proj.display} across splits", 0), ("", 0)]
+            for i in range(top, min(len(sessions), top + rows)):
+                s = sessions[i]
+                mark = "x" if s.name in picked else " "
+                lines.append((f"{'>' if i == cur else ' '} [{mark}] {s.name}  {self.status_label(s.name)}",
+                              curses.A_BOLD if i == cur else 0))
+            lines += [("", 0), ("space pick  a all  enter open  esc cancel", curses.A_DIM)]
+            width = max(len(t) for t, _ in lines) + 6
+            win = self._popup(lines, height=len(lines) + 2, width=width)
+            win.refresh()
+            try:
+                ch = win.get_wch()
+            except (curses.error, KeyboardInterrupt):
+                return None
+            if ch in ("\x1b", "\x03"):
+                return None
+            if ch in ("\n", "\r", curses.KEY_ENTER):
+                chosen = [s.name for s in sessions if s.name in picked]
+                return chosen or [sessions[cur].name]
+            if ch == " ":
+                picked ^= {sessions[cur].name}
+            elif ch == "a":
+                everyone = {s.name for s in sessions}
+                picked = set() if picked == everyone else everyone
+            elif ch in (curses.KEY_UP, "\x10"):
+                cur = max(0, cur - 1)
+            elif ch in (curses.KEY_DOWN, "\x0e"):
+                cur = min(len(sessions) - 1, cur + 1)
+
     def confirm_modal(self, prompt, targets):
         preview = ", ".join(targets)
         lines = [
@@ -514,6 +566,10 @@ class UI:
                     continue
                 if ch == "\x04":            # Ctrl-D
                     self.on_delete()
+                    continue
+                if ch == "\x01":            # Ctrl-A
+                    if self.on_new() == "quit":
+                        return self.action
                     continue
                 if ch == "\x0e":            # Ctrl-N
                     self.move(1); continue

@@ -18,9 +18,13 @@ Try the whole setup, take just the parts you need, or fork it and make it your o
 
 - **ctrl+space, from anywhere.** A terminal drops down over whatever you are
   doing, using [Ghostty's quick terminal](config/ghostty/config).
+  opt+shift+1..9 splits it into that many even panes, dropping idle shells
+  first. ([`ghostty_panes.py`](home/bin/ghostty_panes.py))
 - **`tp` shows every agent at a glance.** One list of tmux sessions, grouped by
   project, each tagged *active*, *waiting* (it needs you), or *idle* (done).
-  Type to filter, Enter to jump in. ([`tp_tui.py`](config/tp/tp_tui.py))
+  Type to filter, Enter to jump in. Enter on a project lets you tick several
+  sessions and opens them across the Ghostty splits, adding splits as needed.
+  ([`tp_tui.py`](config/tp/tp_tui.py))
 - **Agents survive a reboot.** Restart the Mac and every Claude and Copilot
   pane comes back in the same conversation, not a blank one.
   ([`agents.sh`](config/tmux-resurrect/agents.sh))

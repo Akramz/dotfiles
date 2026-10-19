@@ -76,6 +76,7 @@ The rest comes from your company once you enrol:
 
 - [ ] `./install.sh doctor` → `every link clear`
 - [ ] ctrl+space opens Ghostty; `tp` lists sessions; `cld test` starts a Claude session in the current checkout.
+- [ ] In Ghostty, opt+shift+4 makes a 2x2 grid and opt+shift+1 goes back to one pane. The first time, macOS may ask to let Ghostty control System Events: allow it.
 - [ ] `claude` → `/skills` lists the repo skills.
 
 ## 9. Linux
