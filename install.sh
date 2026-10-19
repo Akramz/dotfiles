@@ -404,6 +404,37 @@ ensure_bin() {  # ensure_bin <bin> <label> <install command...>
   "$@" >/dev/null 2>&1 || fail "$label failed"
 }
 
+# Claude Desktop rewrites claude_desktop_config.json itself, so it can't be a
+# link: merge just mcpServers.workiq. Desktop doesn't read the shell PATH, and
+# workiq is a `#!/usr/bin/env node` script, so call node by its full path.
+desktop_workiq_mcp() {
+  local dir="$HOME/Library/Application Support/Claude" cfg tmp
+  cfg="$dir/claude_desktop_config.json"
+  [[ -d "$dir" ]] || { skip "Claude Desktop not installed"; return 0; }
+  have workiq && have node || { warn "workiq or node missing, skipping Desktop MCP"; return 0; }
+  tmp="$(mktemp)"
+  python3 - "$cfg" "$tmp" "$(command -v node)" "$(python3 -c 'import os,shutil; print(os.path.realpath(shutil.which("workiq")))')" <<'PY'
+import json, os, sys
+cfg, tmp, node, script = sys.argv[1:]
+data = json.load(open(cfg)) if os.path.exists(cfg) else {}
+want = {"command": node, "args": [script, "mcp"]}
+if data.get("mcpServers", {}).get("workiq") == want:
+    sys.exit(0)
+data.setdefault("mcpServers", {})["workiq"] = want
+json.dump(data, open(tmp, "w"), indent=2)
+sys.exit(3)
+PY
+  case $? in
+    0) same "Claude Desktop workiq MCP"; rm -f "$tmp"; return 0 ;;
+    3) ;;
+    *) fail "could not update $cfg"; rm -f "$tmp"; return 0 ;;
+  esac
+  chmod 644 "$tmp"
+  [[ -e "$cfg" ]] && backup "$cfg"
+  mv "$tmp" "$cfg"
+  changed "Claude Desktop workiq MCP (restart Claude Desktop)"
+}
+
 stage_agents() {
   stage "agents"
 
@@ -412,6 +443,7 @@ stage_agents() {
   # On the Mac codex comes from its cask instead, see below.
   (( IS_MAC )) || ensure_bin codex "npm i -g @openai/codex" npm i -g @openai/codex
   (( WITH_WORK )) && ensure_bin workiq "npm i -g @microsoft/workiq" npm i -g @microsoft/workiq
+  (( WITH_WORK && IS_MAC )) && desktop_workiq_mcp
 
   if (( IS_MAC )); then
     # `copilot` comes from the copilot-cli cask in the Brewfile.

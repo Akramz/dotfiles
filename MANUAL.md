@@ -70,7 +70,7 @@ The rest comes from your company once you enrol:
 - [ ] **Azure VPN Client** (App Store).
 - [ ] If PyPI is blocked, set your company's approved package proxy as the default index in `~/.config/uv/uv.toml` (`[[index]]` with `default = true`). The agents read `~/.claude/work.md`, which points there.
 - [ ] `~/.npmrc` points npm at your company's internal registry. It is not in this repo; it comes back with the corporate tooling.
-- [ ] **Work IQ**: `workiq accept-eula && workiq auth login`. Agents use it through the `workiq` skill.
+- [ ] **Work IQ**: `workiq accept-eula && workiq auth login`. Agents use it through the `workiq` skill; Claude Desktop through the `workiq` MCP server that the `agents` stage adds (restart Desktop after).
 
 ## 8. Verify
 
