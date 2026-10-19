@@ -117,6 +117,29 @@ tp() {
 cld() {
   _tp_new_claude "$*" "$PWD"
 }
+
+# vcp — copy files or folders to or from a VM. dest is always a folder; a trailing / never matters.
+#   pull: dest defaults to here.  push: dest defaults to the same folder under ~ as here.
+# `function` form: the noglob alias below would break `vcp()` when .zshrc is re-sourced.
+function vcp {
+  if [[ ! -e $1 && $1 == *:* ]]; then
+    local dest=${2:-.}
+    mkdir -p "$dest" && rsync -aP "${1%/}" "$dest/"
+    return
+  fi
+  (( $# >= 2 )) || { echo "usage: vcp host:path [dest] | vcp path… host[:dest]" >&2; return 2; }
+  local -a src=(${~@[1,-2]})
+  local t=${@[-1]}; local host=${t%%:*}; local dest=${${t#$host}#:}
+  dest=${${dest#\~/}%/}
+  if [[ -z $dest ]]; then
+    [[ $PWD == $HOME/* ]] && dest=${PWD#$HOME/} || dest=.
+  fi
+  echo "→ $host:$dest/"
+  rsync -aP --rsync-path="mkdir -p '$dest' && rsync" "${src[@]%/}" "$host:$dest/"
+}
+# Remote globs (vcp vm:runs/*.tif) reach the VM as typed; local ones expand in vcp.
+alias vcp='noglob vcp'
+compdef vcp=scp
 oa() {
   _tp_new_codex "$*"
 }
