@@ -31,7 +31,7 @@
 
 ## Git
 
-- Work on `main`. Do not create a branch, worktree, or PR unless I ask.
+- Work on `main`. Do not create a branch, worktree, or PR unless I ask or `/push` calls for one.
 - Commit and push only when I ask (for example with /push). Never commit or push as the tail
   of another task. The same goes for submodules.
 
