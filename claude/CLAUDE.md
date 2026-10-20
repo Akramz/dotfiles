@@ -14,6 +14,7 @@
 
 - Implement the simplest working solution first. Add complexity only when it's needed.
 - Minimal comments. No docstrings.
+- Before writing a plan with `/html-plan`, check that I gave you a way to verify the work (a test, a command, a page to check). If I didn't, push back and ask for one first.
 
 ## Reporting
 
