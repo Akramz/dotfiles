@@ -1,6 +1,0 @@
-{
-  "name": "hide",
-  "version": "0.1.0",
-  "description": "/hide: toggle blanking every side pane, whatever it shows",
-  "types": "./types/index.d.ts"
-}
