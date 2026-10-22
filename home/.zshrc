@@ -51,39 +51,20 @@ alias tnew='tmux new-session -s'
 alias tls='tmux list-sessions'
 alias tattach='tmux attach-session -t'
 alias tkill='tmux kill-session -t'
-# _tp_new_claude — create a claude session in DIR and enter it. Sessions run in
-# the checkout as it stands; nothing here creates a worktree or a branch.
-_tp_new_claude() {
-  local name="$1" dir="${2:-$PWD}" cmd
-  cmd='claude --permission-mode auto'
-
+# _tp_new NAME DIR CMD — create a tmux session running CMD in DIR (nesting-aware) and enter it.
+# Sessions run in the checkout as it stands; nothing here creates a worktree or a branch.
+_tp_new() {
   if [[ -n $TMUX ]]; then
-    command tmux new-session -d -s "$name" -c "$dir" "$cmd" \
-      && command tmux switch-client -t "$name"
+    command tmux new-session -d -s "$1" -c "$2" "$3" \
+      && command tmux switch-client -t "$1"
   else
-    command tmux new-session -s "$name" -c "$dir" "$cmd"
+    command tmux new-session -s "$1" -c "$2" "$3"
   fi
 }
-# _tp_new_copilot — create a Copilot CLI session in DIR (nesting-aware) and enter it
-_tp_new_copilot() {
-  local name="$1" dir="${2:-$PWD}"
-  if [[ -n $TMUX ]]; then
-    command tmux new-session -d -s "$name" -c "$dir" 'copilot --autopilot --yolo' \
-      && command tmux switch-client -t "$name"
-  else
-    command tmux new-session -s "$name" -c "$dir" 'copilot --autopilot --yolo'
-  fi
-}
-# _tp_new_codex — create a codex session in DIR (nesting-aware) and enter it
-_tp_new_codex() {
-  local name="$1" dir="${2:-$PWD}"
-  if [[ -n $TMUX ]]; then
-    command tmux new-session -d -s "$name" -c "$dir" 'codex' \
-      && command tmux switch-client -t "$name"
-  else
-    command tmux new-session -s "$name" -c "$dir" 'codex'
-  fi
-}
+# _tp_new_claude NAME [DIR] [FLAG…] — extra args go to claude
+_tp_new_claude() { _tp_new "$1" "${2:-$PWD}" "claude --permission-mode auto ${(j: :)${(q)@[3,-1]}}" }
+_tp_new_copilot() { _tp_new "$1" "${2:-$PWD}" 'copilot --autopilot --yolo' }
+_tp_new_codex() { _tp_new "$1" "${2:-$PWD}" codex }
 # tp [name] — project-grouped tmux session picker (TUI: ~/.config/tp/tp_tui.py)
 # with a name: attach if that session exists, else open the picker filtered by it
 tp() {
@@ -117,10 +98,8 @@ tp() {
   esac
 }
 
-# cld <name>      new Claude session in the current checkout
-cld() {
-  _tp_new_claude "$*" "$PWD"
-}
+# cld <name> [--flag…]   new Claude session in the current checkout; dash args go to claude (e.g. --chrome)
+cld() { _tp_new_claude "${${@:#-*}[*]}" "$PWD" ${(M)@:#-*} }
 
 # vcp — copy files or folders to or from a VM. dest is always a folder; a trailing / never matters.
 #   pull: dest defaults to here.  push: dest defaults to the same folder under ~ as here.

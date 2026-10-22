@@ -50,8 +50,8 @@ A few useful skills:
 You don't need the whole setup.
 
 **`tp`** (tmux, zsh, Python 3, no packages): copy
-[`config/tp/tp_tui.py`](config/tp/tp_tui.py) to `~/.config/tp/` and the `tp`
-and `_tp_new_copilot` functions from [`home/.zshrc`](home/.zshrc) into your
+[`config/tp/tp_tui.py`](config/tp/tp_tui.py) to `~/.config/tp/` and the `tp`,
+`_tp_new` and `_tp_new_copilot` functions from [`home/.zshrc`](home/.zshrc) into your
 `~/.zshrc`. The state tags read Claude Code's pane text; tune `WORKING_RE` and
 `WAITING_RE` for other agents.
 
@@ -113,7 +113,7 @@ before using this setup.
 
 | Where | What it does |
 |---|---|
-| `cld` in [`home/.zshrc`](home/.zshrc) | `claude --permission-mode auto`: a classifier approves routine actions; risky ones still ask |
+| `cld` in [`home/.zshrc`](home/.zshrc) | `claude --permission-mode auto`: a classifier approves routine actions; risky ones still ask. Dash args pass through: `cld test --chrome` gives the session browser tools |
 | `pc`, and Enter in `tp` | `copilot --autopilot --yolo` |
 | [`claude/settings.json`](claude/settings.json) | auto mode, `git push` allowed |
 | [`copilot/settings.json`](copilot/settings.json) | `allow-all` permissions |
