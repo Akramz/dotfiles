@@ -4,6 +4,8 @@
 # install.sh: change macOS settings without asking.
 # export DOTFILES_YES=1
 
-# /weekly-git-commits: author pattern and repo root (defaults: git user.email, ~/projects).
-# export WEEKLY_GIT_AUTHOR=yourname
-# export WEEKLY_GIT_ROOT="$HOME/projects"
+# /reflect: git author pattern, repo root, Obsidian vault
+# (defaults: git user.email, ~/projects, ~/Dropbox/Common/obsidian_vault).
+# export REFLECT_GIT_AUTHOR=yourname
+# export REFLECT_GIT_ROOT="$HOME/projects"
+# export REFLECT_VAULT="$HOME/Dropbox/Common/obsidian_vault"

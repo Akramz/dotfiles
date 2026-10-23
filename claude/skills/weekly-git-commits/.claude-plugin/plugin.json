@@ -1,6 +1,0 @@
-{
-  "name": "weekly-git-commits",
-  "version": "0.1.0",
-  "description": "/weekly-git-commits: a pane ranking repos under ~/projects (or $WEEKLY_GIT_ROOT) by your commits in the last 7 days",
-  "types": "./types/index.d.ts"
-}
