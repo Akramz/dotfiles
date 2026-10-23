@@ -1,11 +1,12 @@
 {
+  "cleanupPeriodDays": 36500,
   "permissions": {
     "allow": [
       "Bash(git push:*)"
     ],
     "defaultMode": "auto"
   },
-  "model": "claude-fable-5-1[1m]",
+  "model": "opus",
   "hooks": {
     "SessionStart": [
       {
@@ -46,13 +47,11 @@
     },
     "claude-fable-5-1": {
       "effortLevel": "high"
+    },
+    "claude-opus-5-5": {
+      "effortLevel": "high"
     }
   },
-  "skipWorkflowUsageWarning": true,
-  "theme": "dark-ansi",
-  "editorMode": "vim",
-  "agentPushNotifEnabled": true,
-  "skipAutoPermissionPrompt": true,
   "pluginConfigs": {
     "agents-md@builtin": {
       "options": {
@@ -60,5 +59,11 @@
       }
     }
   },
-  "cleanupPeriodDays": 36500
+  "skipDangerousModePermissionPrompt": true,
+  "skipWorkflowUsageWarning": true,
+  "theme": "dark-ansi",
+  "editorMode": "vim",
+  "switchModelsOnFlag": false,
+  "agentPushNotifEnabled": true,
+  "skipAutoPermissionPrompt": true
 }
