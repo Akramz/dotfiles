@@ -16,10 +16,11 @@ inclusive). Vault quarters and weeks follow the journal folders, not the calenda
 them as labels. With no period, use this week, Monday to Sunday.
 
 It prints Toggl hours, the user's commits and the vault files for the period. Read the files.
-In journal notes, `[x]` is done and `[-]` moved on. A weekly file's top sections are the goals
-for that week; its "Reflections" and "How Well Did I Do?" review the week before. A past OKR
-file may hold the user's own scores; use them. Commit totals run high (submodule bumps,
-rewritten or mirrored repos), so treat them as rough.
+In journal notes, `[x]` is done, `[-]` moved on, `[u]` is up (moving, not done) and `[d]` is
+down (going badly). A weekly file's top sections are the goals for that week; its
+"Reflections" and "How Well Did I Do?" review the week before. A past OKR file may hold the
+user's own scores; use them. Commit totals run high (submodule bumps, rewritten or mirrored
+repos), so treat them as rough.
 
 If the period is longer than one month, run `gather.py` once for the whole period, then give
 each month to a subagent: it runs `gather.py START END --no-toggl` for its month (the Toggl
