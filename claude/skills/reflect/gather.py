@@ -2,7 +2,7 @@ import base64, collections, datetime as dt, json, os, subprocess, sys, urllib.er
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
-VAULT = Path(os.environ.get("REFLECT_VAULT", "~/Dropbox/Common/obsidian_vault")).expanduser()
+VAULT = Path(os.environ.get("REFLECT_VAULT", "~/obsidian_vault")).expanduser()
 ROOT = Path(os.environ.get("REFLECT_GIT_ROOT", "~/projects")).expanduser()
 TOGGL = "https://api.track.toggl.com"
 
