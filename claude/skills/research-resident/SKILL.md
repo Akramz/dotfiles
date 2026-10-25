@@ -19,7 +19,7 @@ Read these from the "Research resident" section of `~/.claude/profile.md`. Ask t
 
 - `GH_USER`: the GitHub account that owns new repos.
 - `DEST`: the directory new repos go in.
-- `BACKLOG` (optional): an `owner/repo` with idea notes under `ideas/`. Without it, skip §2.1.
+- `BACKLOG` (optional): an `owner/repo` with research ideas under `research/`. Without it, skip §2.1.
 - `TEMPLATE`: a cookiecutter template for new repos, as a local path or an `owner/repo`. Only §2.3 needs it.
 
 ## 1. New or continue
@@ -35,12 +35,12 @@ Before anything, you should know whether the user wants to start a new project o
 
 Skip this step when there is no `BACKLOG` or the user names no idea.
 
-The user names the idea. Match the name loosely (`crop noise` → `crop_label_noise_sim.md`) against `ideas/` and name the file you opened.
+The user names the idea. Match the name loosely (`crop noise` → `crop_label_noise_sim.md`) against `research/` and name the file you opened.
 
 ```sh
 export GH_TOKEN="$(gh auth token --user "$GH_USER")"  # a private backlog needs the right account
-gh api repos/$BACKLOG/contents/ideas --jq '.[].name'
-gh api -H 'Accept: application/vnd.github.raw' repos/$BACKLOG/contents/ideas/<file>
+gh api repos/$BACKLOG/contents/research --jq '.[].name'
+gh api -H 'Accept: application/vnd.github.raw' repos/$BACKLOG/contents/research/<file>
 ```
 
 The token must come from an account that can read the backlog. Read the file for background only; it does not travel into the new repo. The scoping doc is what the resident works from.

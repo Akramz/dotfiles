@@ -13,4 +13,4 @@ I'm <name>, a <role>. I work on <topics>. I prefer <how you like answers>.
 ## Research resident (optional)
 
 - `GH_USER`: `<handle>`. `DEST`: `~/projects/<Group>`.
-- `BACKLOG`: `<owner/repo>` with idea notes under `ideas/`. `TEMPLATE`: `<path or owner/repo of a cookiecutter>`.
+- `BACKLOG`: `<owner/repo>` with research ideas under `research/`. `TEMPLATE`: `<path or owner/repo of a cookiecutter>`.
