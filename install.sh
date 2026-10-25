@@ -106,6 +106,7 @@ LINKS_ALL=(
   "claude/settings.json|$HOME/.claude/settings.json"
   "claude/keybindings.json|$HOME/.claude/keybindings.json"
   "claude/init-submodules.sh|$HOME/.claude/init-submodules.sh"
+  "claude/hooks|$HOME/.claude/hooks"
   "claude/skills|$HOME/.claude/skills"
   "claude/skills|$HOME/.copilot/skills"
   "copilot/settings.json|$HOME/.copilot/settings.json"
