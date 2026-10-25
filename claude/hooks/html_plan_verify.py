@@ -12,13 +12,13 @@ RULE = """Rule from the user for /html-plan: every plan must have a Goal Verific
 - Add `<doc-claim aux="verify">` after `aux="shared"` and before `aux="scope"`.
 - Its first child is `<p><b>Goal Verification</b> · one sentence that says what proves the work is correct and done.</p>`
 - Its exhibit is `<doc-draft id="verify" label="Goal Verification">` with the text inside `<script type="text/plain">`. The reader can edit this text, and the edit comes back as a diff.
-- In the draft, write one line for each level-1 claim: the claim number, the check, and the expected result. A check is an exact command, a test name, or a page and what to look at. Read the repo first and use its real test runner and scripts. Mark a manual check with "manual".
-- End the draft with one line that starts with "Done when:".
+- In the draft, explain how you will verify that the work is correct: the core logic, not a list of commands. For each level-1 claim, say what you will check, what result proves the claim, and why a wrong implementation would fail that check. Mention a command or test only to support that logic. Read the repo first so the logic fits how the project really runs.
+- Write the draft in natural, simple American English, not STE. It is for the user to read and edit.
 - pack.mjs does not count `doc-draft` as an exhibit, so it warns "claim verify: nothing under it". Accept that one warning. Do not add a second exhibit.
 - If the user gave a way to verify, use it and quote it in the draft. If not, write your best guess and add a `<doc-note tone="warn">` under the draft that says it is a guess.
 - If there is a real fork in how to verify (for example, a new test or a manual check), add one `doc-ask` after the draft. It counts toward the 2 to 5 decisions.
 - In the hand-over line, ask the user to read the Goal Verification section.
-- After the user responds, apply the edits and comments on that section. After you build, run every check in it and report each result."""
+- After the user responds, apply the edits and comments on that section. After you build, verify the work the way the section says and report what you found for each claim."""
 
 
 def find_plan(cmd, cwd):
@@ -50,8 +50,6 @@ def problems(html):
     d = re.search(r"<doc-draft\b[^>]*>\s*<script type=[\"']?text/plain[\"']?>(.*?)</script>", sec, re.S)
     if not d or not d.group(1).strip():
         out.append("no non-empty <doc-draft> with the checks")
-    elif "Done when:" not in d.group(1):
-        out.append('the draft has no "Done when:" line')
     return out
 
 
