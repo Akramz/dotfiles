@@ -1,9 +1,9 @@
 ---
-name: research-resident
-description: Hand a scoped research project to an autonomous resident that runs it end to end and leaves a paper draft to review. The user brings the scoping doc, either for a new project or for the next iteration of an existing draft, then a detached agent session executes it. Use when the user asks for a research resident, or wants to start or advance a research paper unattended.
+name: researcher
+description: Hand a scoped research project to an autonomous resident that runs it end to end and leaves a paper draft to review. The user brings the scoping doc, either for a new project or for the next iteration of an existing draft, then a detached agent session executes it. Use when the user runs /researcher, asks for a researcher or research resident, or wants to start or advance a research paper unattended.
 ---
 
-# Research resident
+# Researcher
 
 The user scopes the work, the resident works it for a day and leaves a draft PR.
 
@@ -15,7 +15,7 @@ The run gets no real-time feedback. Everything it needs is on disk before it sta
 
 ## Settings
 
-Read these from the "Research resident" section of `~/.claude/profile.md`. Ask the user for any that a step needs and the profile lacks.
+Read these from the "Researcher" section of `~/.claude/profile.md`. Ask the user for any that a step needs and the profile lacks.
 
 - `GH_USER`: the GitHub account that owns new repos.
 - `DEST`: the directory new repos go in.

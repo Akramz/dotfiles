@@ -38,10 +38,8 @@ A few useful skills:
 
 | Skill | What it does |
 |---|---|
-| [`explain`](claude/skills/explain/SKILL.md) | draws a repo, folder or diff as one interactive HTML diagram |
-| [`explainy`](claude/skills/explainy/SKILL.md) | the same, for a total beginner: big pictures, few words |
-| [`research-resident`](claude/skills/research-resident/SKILL.md) | hands a scoped research project to an agent that runs it end to end and leaves a paper draft |
-| [`minimize`](claude/skills/minimize/SKILL.md) | hunts the codebase for things to delete or simplify |
+| [`explainy`](claude/skills/explainy/SKILL.md) | explains a repo, folder or diff to a total beginner: big pictures, few words |
+| [`researcher`](claude/skills/researcher/SKILL.md) | hands a scoped research project to an agent that runs it end to end and leaves a paper draft |
 | [`hunk`](claude/skills/hunk/SKILL.md) | opens a live diff pane beside the agent |
 | [`gog`](claude/skills/gog/SKILL.md) | lets agents read your Gmail, Calendar and Drive |
 
