@@ -2,6 +2,6 @@
   "renderMarkdown": true,
   "theme": "default",
   "logLevel": "all",
-  "defaultPermissionMode": "allow-all",
+  "defaultPermissionMode": "assisted",
   "autoUpdatesChannel": "stable"
 }

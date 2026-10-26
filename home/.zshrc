@@ -63,7 +63,7 @@ _tp_new() {
 }
 # _tp_new_claude NAME [DIR] [FLAG…] — extra args go to claude
 _tp_new_claude() { _tp_new "$1" "${2:-$PWD}" "claude --permission-mode auto ${(j: :)${(q)@[3,-1]}}" }
-_tp_new_copilot() { _tp_new "$1" "${2:-$PWD}" 'copilot --autopilot --yolo' }
+_tp_new_copilot() { _tp_new "$1" "${2:-$PWD}" 'copilot --autopilot' }
 _tp_new_codex() { _tp_new "$1" "${2:-$PWD}" codex }
 # tp [name] — project-grouped tmux session picker (TUI: ~/.config/tp/tp_tui.py)
 # with a name: attach if that session exists, else open the picker filtered by it
