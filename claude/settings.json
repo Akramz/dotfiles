@@ -7,6 +7,9 @@
     "defaultMode": "auto"
   },
   "model": "opus",
+  "env": {
+    "ENABLE_STOP_REVIEW": "0"
+  },
   "hooks": {
     "SessionStart": [
       {
@@ -45,7 +48,8 @@
   },
   "enabledPlugins": {
     "cc-plugin-you-should-know@builtin": true,
-    "html-plan@claude-community": true
+    "html-plan@claude-community": true,
+    "security-guidance@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "claude-community": {
