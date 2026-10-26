@@ -55,7 +55,10 @@ alias tkill='tmux kill-session -t'
 # Sessions run in the checkout as it stands; nothing here creates a worktree or a branch.
 # DIR as host:dir (not a local folder) runs it on that ssh host instead.
 _tp_new() {
-  [[ ! -d $2 && $2 == *:* ]] && { _tp_new_remote "$@"; return }
+  if [[ ! -d $2 ]]; then
+    [[ $2 == *:* ]] && { _tp_new_remote "$@"; return }
+    print -u2 "no such folder: $2"; return 1
+  fi
   if [[ -n $TMUX ]]; then
     command tmux new-session -d -s "$1" -c "$2" "$3" \
       && command tmux switch-client -t "$1"
@@ -65,18 +68,17 @@ _tp_new() {
 }
 # _tp_new_remote NAME HOST:DIR CMD — run CMD in tmux session NAME on HOST, inside a local
 # session NAME@HOST so tp lists it. The remote session outlives ssh; rerunning reattaches.
-# A relative DIR is under the remote ~. zsh -i: on Linux, brew (and its tmux) is only on
-# PATH in interactive shells.
+# A relative DIR is under the remote ~. Runs in zsh if the host has it, else the login shell;
+# -i because on Linux brew (and its tmux) is only on PATH in interactive shells.
+# A failed launch stays on screen for 5s.
 _tp_new_remote() {
   local host=${2%%:*} dir=${2#*:}
   [[ $dir == /* ]] && dir=${(q)dir} || dir="~/${(q)${dir#\~/}}"
-  local inner="cd $dir || { sleep 5; exit 1; }; exec tmux new-session -A -s ${(q)1} ${(q)3}"
-  _tp_new "$1@$host" "$PWD" "ssh -t ${(q)host} ${(q)${:-zsh -ilc ${(q)inner}}}"
+  local inner="cd $dir && exec tmux new-session -A -s ${(q)1} ${(q)3}"
+  local rcmd="exec \"\$(command -v zsh || echo \"\$SHELL\")\" -ilc ${(q)inner}"
+  _tp_new "$1@$host" "$PWD" "ssh -t ${(q)host} ${(q)rcmd} || sleep 5"
 }
-# _tp_new_claude NAME [DIR] [FLAG…] — extra args go to claude
-_tp_new_claude() { _tp_new "$1" "${2:-$PWD}" "claude --permission-mode auto ${(j: :)${(q)@[3,-1]}}" }
 _tp_new_copilot() { _tp_new "$1" "${2:-$PWD}" 'copilot --autopilot' }
-_tp_new_codex() { _tp_new "$1" "${2:-$PWD}" codex }
 # tp [name] — project-grouped tmux session picker (TUI: ~/.config/tp/tp_tui.py)
 # with a name: attach if that session exists, else open the picker filtered by it
 tp() {
@@ -110,15 +112,29 @@ tp() {
   esac
 }
 
-# cld <name> [--remote host[:dir]] [--flag…]   new Claude session in the current checkout,
-# or on an ssh host (dir defaults to this checkout's path under ~); dash args go to claude
-cld() {
-  local -a remote
-  zparseopts -D -E -remote:=remote
-  local dir=${remote[-1]:-$PWD}
-  [[ -n $remote && $dir != *:* ]] && dir+=:${${PWD#$HOME/}:#/*}
-  _tp_new_claude "${${@:#-*}[*]}" "$dir" ${(M)@:#-*}
+# _tp_launch CMD DEFAULT_NAME ARGS…
+_tp_launch() {
+  local cmd=$1 def=$2; shift 2
+  local -a args=("${@:#-*}")
+  local dir=${args[2]:-$PWD}
+  [[ -d $dir ]] && dir=${dir:a}
+  set -- ${(M)@:#-*}
+  _tp_new "${args[1]:-$def}" "$dir" "$cmd ${(j: :)${(q)@}}"
 }
+# TAB on the path: local folders and ssh hosts, then folders on that host (as scp completes them)
+_tp_launch_complete() {
+  local -a before=(${words[2,CURRENT-1]:#-*})
+  (( $#before == 1 )) || return 1
+  if compset -P 1 '*:'; then _remote_files -/ -- ssh
+  else _alternative 'folders:folder:_path_files -/' 'hosts:host:_ssh_hosts -S:'
+  fi
+}
+# cld / pc / oa <name> [dir | host:dir] [--flag…]   new Claude / Copilot / Codex session in dir
+# (default: here), or on an ssh host (host: alone is its ~); dash args go to the CLI
+cld() { _tp_launch 'claude --permission-mode auto' '' "$@" }
+pc() { _tp_launch 'copilot --autopilot' copilot "$@" }
+oa() { _tp_launch codex '' "$@" }
+compdef _tp_launch_complete cld pc oa
 
 # vcp — copy files or folders to or from a VM. dest is always a folder; a trailing / never matters.
 #   pull: dest defaults to here.  push: dest defaults to the same folder under ~ as here.
@@ -142,13 +158,6 @@ function vcp {
 # Remote globs (vcp vm:runs/*.tif) reach the VM as typed; local ones expand in vcp.
 alias vcp='noglob vcp'
 compdef vcp=scp
-oa() {
-  _tp_new_codex "$*"
-}
-pc() {
-  local session_name="${*:-copilot}"
-  _tp_new_copilot "$session_name"
-}
 
 alias fixmouse="printf '\e[?1000l\e[?1002l\e[?1003l\e[?1006l'"
 

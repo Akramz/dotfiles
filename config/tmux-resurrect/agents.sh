@@ -12,7 +12,14 @@ case "$(ps -o comm= -p "$pid")" in
 esac
 [ -z "$pid" ] && exit 0
 
-args="$(ps -o args= -p "$pid")"
+args="$(ps -ww -o args= -p "$pid")"
+# A cld/pc/oa NAME host:dir pane: rerun its ssh, which reattaches to the agent on the host.
+# ssh joins its command words with spaces, so these flattened args lose nothing.
+case "$args" in
+  "ssh -t "*new-session*)
+    rest="${args#ssh -t }"
+    printf 'ssh -t %s %q\n' "${rest%% *}" "${rest#* }"; exit 0 ;;
+esac
 set -f; set -- $args; set +f
 case "${1##*/}" in node*|python*|Python|bun|deno) shift ;; esac
 agent="${1##*/}"

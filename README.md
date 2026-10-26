@@ -49,7 +49,7 @@ You don't need the whole setup.
 
 **`tp`** (tmux, zsh, Python 3, no packages): copy
 [`config/tp/tp_tui.py`](config/tp/tp_tui.py) to `~/.config/tp/` and the `tp`,
-`_tp_new` and `_tp_new_copilot` functions from [`home/.zshrc`](home/.zshrc) into your
+`_tp_new`, `_tp_new_remote` and `_tp_new_copilot` functions from [`home/.zshrc`](home/.zshrc) into your
 `~/.zshrc`. The state tags read Claude Code's pane text; tune `WORKING_RE` and
 `WAITING_RE` for other agents.
 
@@ -111,8 +111,8 @@ before using this setup.
 
 | Where | What it does |
 |---|---|
-| `cld` in [`home/.zshrc`](home/.zshrc) | `claude --permission-mode auto`: a classifier approves routine actions; risky ones still ask. Dash args pass through: `cld test --chrome` gives the session browser tools. `cld test --remote vm[:dir]` runs it in tmux on an ssh host; it survives disconnects, and rerunning reattaches |
-| `pc`, and Enter in `tp` | `copilot --autopilot --yolo` |
+| `cld` in [`home/.zshrc`](home/.zshrc) | `claude --permission-mode auto`: a classifier approves routine actions; risky ones still ask. `cld test [dir]` starts it in dir (default: here); `cld test vm:dir` runs it in tmux on an ssh host (`vm:` alone is its `~`), survives disconnects, and reattaches when rerun. Dash args pass through: `cld test --chrome` gives the session browser tools |
+| `pc`, and Enter in `tp` | `copilot --autopilot`. `pc` and `oa` (Codex) take the same arguments as `cld` |
 | [`claude/settings.json`](claude/settings.json) | auto mode, `git push` allowed |
 | [`copilot/settings.json`](copilot/settings.json) | `allow-all` permissions |
 | [`vscode/settings.json`](vscode/settings.json) | agent tools auto-approved; every commit pushes; untrusted files open without asking |
