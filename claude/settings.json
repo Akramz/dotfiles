@@ -49,7 +49,9 @@
   "enabledPlugins": {
     "cc-plugin-you-should-know@builtin": true,
     "html-plan@claude-community": true,
-    "security-guidance@claude-plugins-official": true
+    "security-guidance@claude-plugins-official": true,
+    "duckdb-skills@claude-plugins-official": true,
+    "microsoft-docs@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "claude-community": {

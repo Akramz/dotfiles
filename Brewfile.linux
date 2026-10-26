@@ -36,6 +36,7 @@ brew "hunk"               # review-first terminal diff viewer; skill: claude/ski
 # ── languages / runtimes ────────────────────────────────────────
 brew "uv"                 # Python tools and envs
 brew "ty"                 # Python type checker for the claude/skills/ty-lsp plugin
+brew "duckdb"             # SQL over parquet/csv/geo files; used by the duckdb-skills plugin
 brew "go"
 brew "cmake"
 
