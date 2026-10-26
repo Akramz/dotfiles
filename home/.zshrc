@@ -53,13 +53,25 @@ alias tattach='tmux attach-session -t'
 alias tkill='tmux kill-session -t'
 # _tp_new NAME DIR CMD — create a tmux session running CMD in DIR (nesting-aware) and enter it.
 # Sessions run in the checkout as it stands; nothing here creates a worktree or a branch.
+# DIR as host:dir (not a local folder) runs it on that ssh host instead.
 _tp_new() {
+  [[ ! -d $2 && $2 == *:* ]] && { _tp_new_remote "$@"; return }
   if [[ -n $TMUX ]]; then
     command tmux new-session -d -s "$1" -c "$2" "$3" \
       && command tmux switch-client -t "$1"
   else
     command tmux new-session -s "$1" -c "$2" "$3"
   fi
+}
+# _tp_new_remote NAME HOST:DIR CMD — run CMD in tmux session NAME on HOST, inside a local
+# session NAME@HOST so tp lists it. The remote session outlives ssh; rerunning reattaches.
+# A relative DIR is under the remote ~. zsh -i: on Linux, brew (and its tmux) is only on
+# PATH in interactive shells.
+_tp_new_remote() {
+  local host=${2%%:*} dir=${2#*:}
+  [[ $dir == /* ]] && dir=${(q)dir} || dir="~/${(q)${dir#\~/}}"
+  local inner="cd $dir || { sleep 5; exit 1; }; exec tmux new-session -A -s ${(q)1} ${(q)3}"
+  _tp_new "$1@$host" "$PWD" "ssh -t ${(q)host} ${(q)${:-zsh -ilc ${(q)inner}}}"
 }
 # _tp_new_claude NAME [DIR] [FLAG…] — extra args go to claude
 _tp_new_claude() { _tp_new "$1" "${2:-$PWD}" "claude --permission-mode auto ${(j: :)${(q)@[3,-1]}}" }
@@ -98,8 +110,15 @@ tp() {
   esac
 }
 
-# cld <name> [--flag…]   new Claude session in the current checkout; dash args go to claude (e.g. --chrome)
-cld() { _tp_new_claude "${${@:#-*}[*]}" "$PWD" ${(M)@:#-*} }
+# cld <name> [--remote host[:dir]] [--flag…]   new Claude session in the current checkout,
+# or on an ssh host (dir defaults to this checkout's path under ~); dash args go to claude
+cld() {
+  local -a remote
+  zparseopts -D -E -remote:=remote
+  local dir=${remote[-1]:-$PWD}
+  [[ -n $remote && $dir != *:* ]] && dir+=:${${PWD#$HOME/}:#/*}
+  _tp_new_claude "${${@:#-*}[*]}" "$dir" ${(M)@:#-*}
+}
 
 # vcp — copy files or folders to or from a VM. dest is always a folder; a trailing / never matters.
 #   pull: dest defaults to here.  push: dest defaults to the same folder under ~ as here.

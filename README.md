@@ -111,7 +111,7 @@ before using this setup.
 
 | Where | What it does |
 |---|---|
-| `cld` in [`home/.zshrc`](home/.zshrc) | `claude --permission-mode auto`: a classifier approves routine actions; risky ones still ask. Dash args pass through: `cld test --chrome` gives the session browser tools |
+| `cld` in [`home/.zshrc`](home/.zshrc) | `claude --permission-mode auto`: a classifier approves routine actions; risky ones still ask. Dash args pass through: `cld test --chrome` gives the session browser tools. `cld test --remote vm[:dir]` runs it in tmux on an ssh host; it survives disconnects, and rerunning reattaches |
 | `pc`, and Enter in `tp` | `copilot --autopilot --yolo` |
 | [`claude/settings.json`](claude/settings.json) | auto mode, `git push` allowed |
 | [`copilot/settings.json`](copilot/settings.json) | `allow-all` permissions |
