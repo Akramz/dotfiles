@@ -24,7 +24,9 @@ Try the whole setup, take just the parts you need, or fork it and make it your o
   project, each tagged *active*, *waiting* (it needs you), or *idle* (done).
   Type to filter, Enter to jump in. Enter on a project lets you tick several
   sessions and opens them across the Ghostty splits, adding splits as needed.
-  ([`tp_tui.py`](config/tp/tp_tui.py))
+  Sessions on your ssh hosts show up too: each VM is a folded `@host` row
+  above the open `@local` one, found in the background so a slow or stopped
+  VM never holds up the list; Enter opens a VM session without an ssh step first. ([`tp_tui.py`](config/tp/tp_tui.py))
 - **Agents survive a reboot.** Restart the Mac and every Claude and Copilot
   pane comes back in the same conversation, not a blank one.
   ([`agents.sh`](config/tmux-resurrect/agents.sh))
