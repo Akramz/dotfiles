@@ -89,30 +89,29 @@ Hold the doc until §2.3 scaffolds the repo; it lands as `RESEARCH_BRIEF.md` at 
 
 `TEMPLATE` is a cookiecutter, not a GitHub template repo. When it is an `owner/repo`, clone it (or reuse a local clone) and run cookiecutter over the clone.
 
-The commands below assume a template with `research-writing` and `claude-code` packs, a `make verify` target and a LaTeX paper at `paper/paper.tex`. With another template, swap in its options and checks; the resident needs `paper/paper.tex` and one verify command.
+The commands below assume a template that always ships a LaTeX paper at `paper/main.tex` and has a `make verify` target. With another template, swap in its options and checks; the resident needs one paper source and one verify command.
+
+If a `new-project` command is on `PATH`, use it: it is a private wrapper that runs the same bake and also sets machine-local Claude settings. Otherwise run cookiecutter directly.
 
 ```sh
+new-project "<Project Name>" project_short_description="<one line>" github_username=$GH_USER
+# or
 uvx cookiecutter --no-input -o "$DEST" "<local clone of TEMPLATE>" \
   project_name="<Project Name>" \
   project_short_description="<one line>" \
-  github_username=$GH_USER \
-  research-writing=yes \
-  claude-code=yes
+  github_username=$GH_USER
 ```
 
-`research-writing=yes` keeps `paper/`, `claude-code=yes` keeps `.claude/`. The post-gen hook deletes both when their pack is off, and neither is pleasant to add back. Add any other pack the idea needs now: `deep-learning`, `geo-skills`, `azure-ml`, `viz`. `agent-workflows` is already on. `project_slug` derives from `project_name`: Title Case in, `snake_case` out.
+Add `deep-learning=yes` if the idea needs it. `project_slug` derives from `project_name`: Title Case in, `snake_case` out.
 
-The post-gen hook runs `uv lock`, which needs PyPI. **If it fails, cookiecutter deletes the whole generated tree**, so a failed run is safe to retry once the network is back. `Socket is not connected` against `files.pythonhosted.org` while `pypi.org` answers means the CDN is blocked, not the template.
-
-The paper ships prebuilt LaTeX artifacts (`paper.aux`, `paper.bbl`, …) that misdirect `latexmk` into running `bibtex` on a stub aux file, failing with "I found no \citation commands". Delete them before the first commit.
+The post-gen hook runs `uv lock` against PyPI, which generated projects pin. If it fails, the hook keeps the project and prints the command to finish it. Behind a network that blocks PyPI, set `UV_DEFAULT_INDEX` to an index it allows, then run `uv lock` in the project. `Socket is not connected` against `files.pythonhosted.org` while `pypi.org` answers means the CDN is blocked, not the template.
 
 ```sh
 set -e                                        # a red gate must not reach gh repo create
 cd "$DEST/<project_slug>"
-rm -f paper/paper.{aux,bbl,blg,fdb_latexmk,fls,log,out,pdf,synctex.gz}
 uv sync --frozen
 make verify                                   # ~20s on a fresh scaffold. Must pass.
-(cd paper && latexmk -pdf -interaction=nonstopmode paper.tex)   # must exit 0
+(cd paper && latexmk -pdf -interaction=nonstopmode main.tex)    # must exit 0
 git add -A && git commit -qm "Scaffold from template"
 
 export GH_TOKEN="$(gh auth token --user "$GH_USER")" # git spawns the helper, so export it
@@ -132,7 +131,7 @@ git add RESEARCH_BRIEF.md && git commit -qm "Add research brief" && git push -u 
 
 ### 3.1 The repo
 
-The user should already be in the project directory, no need to clone or cd into it. Confirm `paper/paper.tex` exists before going further; a repo with no paper is the wrong target.
+The user should already be in the project directory, no need to clone or cd into it. Confirm `paper/main.tex` exists before going further; a repo with no paper is the wrong target.
 
 ### 3.2 The iteration scoping doc
 
@@ -172,8 +171,8 @@ Work `RESEARCH_BRIEF.md` from Research Questions through to a paper draft.
 
 ## Verification
 - `make verify` exits clean.
-- `cd paper && latexmk -pdf -interaction=nonstopmode paper.tex` exits 0.
-- Every number in `paper.tex` traces to a file under `artifacts/` written by a committed script.
+- `cd paper && latexmk -pdf -interaction=nonstopmode main.tex` exits 0.
+- Every number in `main.tex` traces to a file under `artifacts/` written by a committed script.
 
 ## Guardrails
 - Compute: <local only | may submit cloud jobs | may submit and iterate>
@@ -210,12 +209,12 @@ The condition caps at **4000 characters**, so point it at the brief rather than 
 > Experiment ledger first; never rerun a configuration already recorded there. Run the baseline
 > before the method. Do one experiment at a time, append a ledger row (config / metric / seeds /
 > result), and put every number you report into a file under `artifacts/` written by a committed
-> script. Keep `paper/paper.tex` current as results land, following `paper/README.md`. Commit each
+> script. Keep `paper/main.tex` current as results land, following `paper/README.md`. Commit each
 > kept unit to the current branch; never commit to main; never force push. After the first commit,
 > push and open a **draft** PR with `gh pr create --draft`, and keep its Status section current.
 > Never ask questions, self-verify, report honestly what you skipped. You are DONE when the Stop
 > criterion holds, `make verify` exits clean, and
-> `cd paper && latexmk -pdf -interaction=nonstopmode paper.tex` exits 0, **or** when the same
+> `cd paper && latexmk -pdf -interaction=nonstopmode main.tex` exits 0, **or** when the same
 > blocker has defeated three consecutive attempts, in which case write a final ledger entry naming
 > the blocker, push, put it in the PR body, and stop.
 
