@@ -3,8 +3,8 @@
 
 Sessions are grouped by the directory they were launched from
 (tmux ``#{session_path}``); the project name is that path's leaf dir.
-Projects sit under their host: the ssh hosts in ~/.ssh/config first (scanned in
-the background, folded), then ``@local`` (open). Enter on a remote session opens
+Projects sit under their host: ``@local`` first (open), then the ssh hosts in
+~/.ssh/config (scanned in the background, folded). Enter on a remote session opens
 it in a local NAME@HOST window.
 
 Each session row is tagged with its state:
@@ -411,7 +411,7 @@ class UI:
         for p, sessions in self.visible_projects():
             self.shown[p.path] = sessions
             by_host.setdefault(p.host, []).append(p)
-        for host in sorted(by_host, key=lambda h: (h is None, h or "")):   # VMs, then @local
+        for host in sorted(by_host, key=lambda h: (h is not None, h or "")):   # @local, then VMs
             hrow = ("host", host, None)
             rows.append(hrow)
             self.count[row_id(hrow)] = sum(len(self.shown[p.path]) for p in by_host[host])
