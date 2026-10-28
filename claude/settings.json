@@ -61,7 +61,9 @@
     "security-guidance@claude-plugins-official": true,
     "duckdb-skills@claude-plugins-official": true,
     "microsoft-docs@claude-plugins-official": true,
-    "mpc@mpc": true
+    "mpc@mpc": true,
+    "chrome-devtools-mcp@claude-plugins-official": true,
+    "mcp-server-dev@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "claude-community": {
