@@ -13,9 +13,9 @@ in the dotfiles MANUAL.md, then retry once.
 
 ## Read
 
-Always pass `--readonly -a personal --json --results-only --wrap-untrusted --no-input`.
-`personal` is the account alias set up in MANUAL.md; use another alias if the user names
-one (`gog auth alias list`).
+Always pass `--readonly -a <alias> --json --results-only --wrap-untrusted --no-input`.
+The user has several accounts; `gog auth alias list` maps aliases to emails. Use the one the
+user names; otherwise search every alias, and say which account each result came from.
 
 - `gog gmail search '<gmail query>'`; answer from the snippets when they are enough, else
   `gog gmail thread get <threadId> --sanitize-content`.

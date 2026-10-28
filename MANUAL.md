@@ -57,8 +57,8 @@ macOS will not grant these from a script. Grant them on first launch, or in
 - [ ] `gog` skill (agents read your Google mail, calendar and files):
   1. Create a Google OAuth desktop client (`gog auth setup --help`). Fill Branding's homepage and privacy policy URLs (any public URL works) and press **Publish app** under Audience, or tokens expire after 7 days.
   2. `gog auth credentials set <client.json>`
-  3. `gog auth add <email> --services gmail,calendar,drive,docs,sheets,contacts`
-  4. `gog auth alias set personal <email>`. The skill reads the `personal` alias.
+  3. For each account: `gog auth add <email> --services gmail,calendar,drive,docs,sheets,contacts`
+  4. `gog auth alias set <alias> <email>` for each. The skill searches every alias unless you name one.
 
 ## 7. Work machine (`--with-work`)
 

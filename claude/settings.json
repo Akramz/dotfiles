@@ -4,6 +4,15 @@
     "allow": [
       "Bash(git push:*)"
     ],
+    "deny": [
+      "Bash(*gog* send *)",
+      "Bash(*gog* send)",
+      "Bash(*gog* config *)",
+      "Bash(*gog* --home*)",
+      "Bash(*GOG_HOME*)",
+      "Bash(*gogcli/config*)",
+      "Edit(~/Library/Application Support/gogcli/**)"
+    ],
     "defaultMode": "auto"
   },
   "model": "opus",
