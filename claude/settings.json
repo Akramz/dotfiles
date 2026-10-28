@@ -60,13 +60,20 @@
     "html-plan@claude-community": true,
     "security-guidance@claude-plugins-official": true,
     "duckdb-skills@claude-plugins-official": true,
-    "microsoft-docs@claude-plugins-official": true
+    "microsoft-docs@claude-plugins-official": true,
+    "mpc@mpc": true
   },
   "extraKnownMarketplaces": {
     "claude-community": {
       "source": {
         "source": "github",
         "repo": "anthropics/claude-plugins-community"
+      }
+    },
+    "mpc": {
+      "source": {
+        "source": "github",
+        "repo": "Akramz/mpc"
       }
     }
   },
