@@ -176,6 +176,8 @@ export PATH="$PATH:$HOME/go/bin"
 
 # For Claude
 export CLAUDE_CODE_NO_FLICKER=1
+# Claude Code + Copilot CLI usage figure: agent-usage [SINCE UNTIL] (default last Mon–Sat)
+alias agent-usage='"$HOME/bin/agent_usage.py"'
 
 # macOS-only bits.
 if [[ $OSTYPE == darwin* ]]; then

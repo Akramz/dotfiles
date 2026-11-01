@@ -98,6 +98,7 @@ LINKS_ALL=(
   "home/.gitconfig|$HOME/.gitconfig"
   "home/.hushlogin|$HOME/.hushlogin"
 
+  "home/bin/agent_usage.py|$HOME/bin/agent_usage.py"
   "config/tp/tp_tui.py|$HOME/.config/tp/tp_tui.py"
   "config/tmux-resurrect/agents.sh|$HOME/.tmux/plugins/tmux-resurrect/save_command_strategies/agents.sh"
 
