@@ -22,6 +22,8 @@ down (going badly). A weekly file's top sections are the goals for that week; it
 user's own scores; use them. Commit totals run high (submodule bumps, rewritten or mirrored
 repos), so treat them as rough.
 
+Also review the user's communication for the period: work mail, Teams and calendar with the `workiq` skill, and Gmail and Google Calendar with the `gog` skill.
+
 If the period is longer than one month, run `gather.py` once for the whole period, then give
 each month to a subagent: it runs `gather.py START END --no-toggl` for its month (the Toggl
 free plan allows ~30 calls an hour), reads the files, and returns a short factual summary.
