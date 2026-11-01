@@ -63,7 +63,8 @@
     "microsoft-docs@claude-plugins-official": true,
     "mpc@mpc": true,
     "chrome-devtools-mcp@claude-plugins-official": true,
-    "mcp-server-dev@claude-plugins-official": true
+    "mcp-server-dev@claude-plugins-official": true,
+    "html-explain@html-explain": true
   },
   "extraKnownMarketplaces": {
     "claude-community": {
@@ -76,6 +77,12 @@
       "source": {
         "source": "github",
         "repo": "Akramz/mpc"
+      }
+    },
+    "html-explain": {
+      "source": {
+        "source": "github",
+        "repo": "Akramz/html-explain"
       }
     }
   },
