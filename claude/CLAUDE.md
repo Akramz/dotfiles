@@ -23,6 +23,7 @@
 - When you finish, lead with the outcome: the first sentence answers "what happened" or "what did you find". Detail after that.
 - Do not stop early and claim completion. Do not silently relax constraints.
 - Investigate every test failure, including timeouts.
+- When it fits, show a screenshot or video that proves your work is correct, so I can check it quickly.
 - If you think I'm wrong, say so and argue it.
 
 ## Tests
