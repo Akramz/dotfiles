@@ -14,6 +14,7 @@
 
 - Implement the simplest working solution first. Add complexity only when it's needed.
 - Minimal comments. No docstrings.
+- Focus on the cases people are likely to run into, not every possible one (e.g., if something only breaks when it's misused, it usually isn't worth fixing).
 
 ## Reporting
 
