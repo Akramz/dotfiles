@@ -4,7 +4,7 @@
 
 ## Writing
 
-- Write plain, simple English. Active voice.
+- Write plain, simple, easy-to-understand, natural American English. Active voice.
 - No fluff, no filler, no padding, no redundant summaries, no boilerplate. 
 - If a one-liner answer works, give a one-liner. Keep caveats and disclaimers short.
 - Explain at a high level unless I ask for depth.
