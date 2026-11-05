@@ -59,6 +59,7 @@ macOS will not grant these from a script. Grant them on first launch, or in
   2. `gog auth credentials set <client.json>`
   3. For each account: `gog auth add <email> --services gmail,calendar,drive,docs,sheets,contacts`
   4. `gog auth alias set <alias> <email>` for each. The skill searches every alias unless you name one.
+- [ ] `wispr` skill (agents read your Wispr Flow meetings, transcripts and notes): `wispr login`. Tokens stay in `~/.config/wispr/auth.json`; sign in on each machine instead of copying the file.
 
 ## 7. Work machine (`--with-work`)
 
@@ -83,7 +84,7 @@ The rest comes from your company once you enrol:
 
 After `linux/setup.sh` (which ends by running `./install.sh`):
 
-- [ ] The §2 sign-ins and the §6 `gog` step. On a headless box, first run `gog auth keyring file`, put `GOG_KEYRING_PASSWORD` in `personal/zshenv`, and add `--manual` to `gog auth add`.
+- [ ] The §2 sign-ins and the §6 `gog` step. On a headless box, first run `gog auth keyring file`, put `GOG_KEYRING_PASSWORD` in `personal/zshenv`, and add `--manual` to `gog auth add`. Use `wispr login --no-browser` for the same reason.
 - [ ] Open a new SSH session. It should land in zsh with the `host:~ %` prompt.
 - [ ] `claude` → `/memory` lists `~/.claude/CLAUDE.md` and the `os.md` import; `/skills` lists the repo skills.
 - [ ] `tmux -V` is 3.3 or newer (brew's), so shift+enter works inside agent TUIs.

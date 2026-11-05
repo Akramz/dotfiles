@@ -445,6 +445,7 @@ stage_agents() {
   # On the Mac codex comes from its cask instead, see below.
   (( IS_MAC )) || ensure_bin codex "npm i -g @openai/codex" npm i -g @openai/codex
   (( WITH_WORK )) && ensure_bin workiq "npm i -g @microsoft/workiq" npm i -g @microsoft/workiq
+  ensure_bin wispr "uv tool install wispr-cli" uv tool install git+https://github.com/Akramz/wispr-cli
   (( WITH_WORK && IS_MAC )) && desktop_workiq_mcp
 
   if (( IS_MAC )); then
