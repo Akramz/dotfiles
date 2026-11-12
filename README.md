@@ -31,7 +31,8 @@ Try the whole setup, take just the parts you need, or fork it and make it your o
   pane comes back in the same conversation, not a blank one.
   ([`agents.sh`](config/tmux-resurrect/agents.sh))
 - **One skills folder for every agent.** Write a skill once; Claude, Copilot,
-  and Codex all get it. ([`claude/skills`](claude/skills))
+  and Codex all get it. ([`claude/skills`](claude/skills)) Copilot also reads
+  the same rules as Claude, through links in `~/.copilot/instructions/`.
 - **Keep your machine and the repo in sync.** Some apps replace a linked
   config with a regular file. `./install.sh doctor` detects this;
   `./install.sh pull` copies the changes back into the repo.
@@ -42,6 +43,7 @@ A few useful skills:
 |---|---|
 | [`explainy`](claude/skills/explainy/SKILL.md) | explains a repo, folder or diff to a total beginner: big pictures, few words |
 | [`researcher`](claude/skills/researcher/SKILL.md) | hands a scoped research project to an agent that runs it end to end and leaves a paper draft |
+| [`copilot`](claude/skills/copilot/SKILL.md) | lets Claude hand a job to Copilot CLI in a `delegated-<name>` tmux session you can attach to |
 | [`hunk`](claude/skills/hunk/SKILL.md) | opens a live diff pane beside the agent |
 | [`gog`](claude/skills/gog/SKILL.md) | lets agents read your Gmail, Calendar and Drive |
 

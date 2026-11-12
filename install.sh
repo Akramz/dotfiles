@@ -104,6 +104,9 @@ LINKS_ALL=(
 
   "claude/CLAUDE.md|$HOME/.claude/CLAUDE.md"
   "claude/os/$OS.md|$HOME/.claude/os.md"
+  # Copilot reads every ~/.copilot/instructions/*.instructions.md, so it gets the same rules.
+  "claude/CLAUDE.md|$HOME/.copilot/instructions/rules.instructions.md"
+  "claude/os/$OS.md|$HOME/.copilot/instructions/os.instructions.md"
   "claude/settings.json|$HOME/.claude/settings.json"
   "claude/keybindings.json|$HOME/.claude/keybindings.json"
   "claude/init-submodules.sh|$HOME/.claude/init-submodules.sh"
@@ -126,8 +129,10 @@ LINKS_LAYER=(
   "personal/zshrc|$HOME/.config/zsh/local.zsh"
   "personal/zshenv|$HOME/.config/zsh/local.zshenv"
   "personal/profile.md|$HOME/.claude/profile.md"
+  "personal/profile.md|$HOME/.copilot/instructions/profile.instructions.md"
   "personal/ssh-config|$HOME/.ssh/config"
   "work/claude.md|$HOME/.claude/work.md"
+  "work/claude.md|$HOME/.copilot/instructions/work.instructions.md"
 )
 
 # A layer may also hold a Brewfile (Mac), skills/ and bin/. Set in main().
@@ -294,7 +299,7 @@ stage_link() {
   # A removed skill or layer file leaves a dangling link behind. Skills first:
   # their Codex links only dangle once the skill link is gone.
   for dir in "$DOTFILES/claude/skills" "$HOME/.codex/skills" "$HOME/bin" \
-             "$HOME/.config/zsh" "$HOME/.claude" "$HOME"; do
+             "$HOME/.config/zsh" "$HOME/.claude" "$HOME/.copilot/instructions" "$HOME"; do
     prune_dangling "$dir"
   done
   link_layer_skills
