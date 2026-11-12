@@ -26,7 +26,7 @@ KEEPAWAKE=""; command -v caffeinate >/dev/null && KEEPAWAKE="caffeinate -is "
 command tmux new-session -d -s "$N" -c "$DIR" "set -o pipefail; ${KEEPAWAKE}copilot \
   -p \"\$(cat $S/$N.md)\" --session-id $ID --name $N --model claude-opus-5.5 \
   --reasoning-effort high --allow-all 2>&1 | tee $LOG; echo \$? > $LOG.done; \
-  exec copilot --autopilot --resume=$ID"
+  exec copilot --resume=$ID"
 ```
 
 The session runs the job live, then turns into an interactive Copilot chat on the same

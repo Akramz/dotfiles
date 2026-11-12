@@ -116,7 +116,7 @@ before using this setup.
 | Where | What it does |
 |---|---|
 | `cld` in [`home/.zshrc`](home/.zshrc) | `claude --permission-mode auto`: a classifier approves routine actions; risky ones still ask. `cld test [dir]` starts it in dir (default: here); `cld test vm:dir` runs it in tmux on an ssh host (`vm:` alone is its `~`), survives disconnects, and reattaches when rerun. Dash args pass through: `cld test --chrome` gives the session browser tools |
-| `pc`, and Enter in `tp` | `copilot --autopilot` on Opus 5.5 (`COPILOT_CMD` in `.zshrc`). `pc` and `oa` (Codex) take the same arguments as `cld` |
+| `pc`, and Enter in `tp` | `copilot` on Opus 5.5, interactive mode (`COPILOT_CMD` in `.zshrc`). `pc` and `oa` (Codex) take the same arguments as `cld` |
 | [`claude/settings.json`](claude/settings.json) | auto mode, `git push` allowed |
 | [`copilot/settings.json`](copilot/settings.json) | `allow-all` permissions, high effort, GitHub MCP server off |
 | [`vscode/settings.json`](vscode/settings.json) | agent tools auto-approved; every commit pushes; untrusted files open without asking |
