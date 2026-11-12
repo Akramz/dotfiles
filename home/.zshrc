@@ -78,7 +78,10 @@ _tp_new_remote() {
   local rcmd="exec \"\$(command -v zsh || echo \"\$SHELL\")\" -ilc ${(q)inner}"
   _tp_new "$1@$host" "$PWD" "ssh -t ${(q)host} ${(q)rcmd} || sleep 5"
 }
-_tp_new_copilot() { _tp_new "$1" "${2:-$PWD}" 'copilot --autopilot' }
+# Org policy overrides the model in settings.json; only --model sticks.
+COPILOT_CMD='copilot --model claude-opus-5.5'
+alias copilot=$COPILOT_CMD
+_tp_new_copilot() { _tp_new "$1" "${2:-$PWD}" "$COPILOT_CMD --autopilot" }
 # tp [name] — project-grouped tmux session picker (TUI: ~/.config/tp/tp_tui.py)
 # with a name: attach if that session exists, else open the picker filtered by it
 tp() {
@@ -132,7 +135,7 @@ _tp_launch_complete() {
 # cld / pc / oa <name> [dir | host:dir] [--flag…]   new Claude / Copilot / Codex session in dir
 # (default: here), or on an ssh host (host: alone is its ~); dash args go to the CLI
 cld() { _tp_launch 'claude --permission-mode auto' '' "$@" }
-pc() { _tp_launch 'copilot --autopilot' copilot "$@" }
+pc() { _tp_launch "$COPILOT_CMD --autopilot" copilot "$@" }
 oa() { _tp_launch codex '' "$@" }
 compdef _tp_launch_complete cld pc oa
 

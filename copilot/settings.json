@@ -1,7 +1,8 @@
 {
   "renderMarkdown": true,
   "theme": "default",
-  "logLevel": "all",
-  "defaultPermissionMode": "assisted",
-  "autoUpdatesChannel": "stable"
+  "defaultPermissionMode": "allow-all",
+  "autoUpdatesChannel": "stable",
+  "effortLevel": "high",
+  "disabledMcpServers": ["github-mcp-server"]
 }
