@@ -167,13 +167,6 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 alias z=j
 unsetopt AUTO_CD
 
-# Enter on an empty line clears the screen and lists the folder. The leading space
-# keeps it out of history (oh-my-zsh sets HIST_IGNORE_SPACE).
-_enter_or_clear() {
-  [[ -z $BUFFER$PREBUFFER ]] && BUFFER=' clear && ls'
-  zle .accept-line
-}
-zle -N accept-line _enter_or_clear
 # cd or z lists the new folder; only at a terminal, so agents' shells stay quiet.
 _ls_after_cd() { [[ -t 1 ]] && ls }
 autoload -Uz add-zsh-hook
