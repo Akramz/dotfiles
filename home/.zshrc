@@ -2,6 +2,9 @@
 for _brew in /opt/homebrew/bin/brew /home/linuxbrew/.linuxbrew/bin/brew; do
   [[ -x $_brew ]] && { eval "$($_brew shellenv)"; break; }
 done; unset _brew
+# brew shellenv exports FPATH, so every nested shell (tmux, agents) inherits and grows it;
+# oh-my-zsh then sees a new fpath and rebuilds its completion cache (0.5 s) on each start.
+typeset +x FPATH; typeset -U path fpath
 
 # oh-my-zsh. Themes: https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
 export ZSH="$HOME/.oh-my-zsh"
@@ -12,27 +15,18 @@ source $ZSH/oh-my-zsh.sh
 
 export CONDA_CHANGEPS1=false
 
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-# Paths use $HOME so this file is portable. `conda init zsh` rewrites them
-# as absolute paths; re-apply $HOME if it does.
-__conda_setup="$("$HOME/miniforge3/bin/conda" 'shell.zsh' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "$HOME/miniforge3/etc/profile.d/conda.sh" ]; then
-        . "$HOME/miniforge3/etc/profile.d/conda.sh"
-    else
-        export PATH="$HOME/miniforge3/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-
+# Conda, lazily: its shell hook (~0.4 s, and it activates base) runs the first time
+# you type conda or mamba, not in every new shell. Don't let `conda init` rewrite this.
 export MAMBA_ROOT_PREFIX="$HOME/miniforge3"
-if [ -f "$HOME/miniforge3/etc/profile.d/mamba.sh" ]; then
-    . "$HOME/miniforge3/etc/profile.d/mamba.sh"
-fi
-# <<< conda initialize <<<
+path+=("$HOME/miniforge3/condabin")
+_conda_lazy() {
+  unfunction conda mamba 2>/dev/null
+  eval "$("$HOME/miniforge3/bin/conda" shell.zsh hook)"
+  [[ -f $MAMBA_ROOT_PREFIX/etc/profile.d/mamba.sh ]] && . "$MAMBA_ROOT_PREFIX/etc/profile.d/mamba.sh"
+  "$@"
+}
+conda() { _conda_lazy conda "$@" }
+mamba() { _conda_lazy mamba "$@" }
 
 # Customizing ZSH prompt to include the active Conda environment
 PROMPT='$(conda_prompt_info)%~ %# '
@@ -173,6 +167,21 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 alias z=j
 unsetopt AUTO_CD
 
+# Enter on an empty line clears the screen and lists the folder. The leading space
+# keeps it out of history (oh-my-zsh sets HIST_IGNORE_SPACE).
+_enter_or_clear() {
+  [[ -z $BUFFER$PREBUFFER ]] && BUFFER=' clear && ls'
+  zle .accept-line
+}
+zle -N accept-line _enter_or_clear
+# cd or z lists the new folder; only at a terminal, so agents' shells stay quiet.
+_ls_after_cd() { [[ -t 1 ]] && ls }
+autoload -Uz add-zsh-hook
+add-zsh-hook chpwd _ls_after_cd
+
+# up — update brew and the agent CLIs in one go; stops at the first failure.
+up() { brew update && brew upgrade && brew autoremove && command claude update && command copilot update }
+
 # Claude Code: use the system rg instead of its bundled one
 export USE_BUILTIN_RIPGREP=0
 export PATH="$PATH:$HOME/go/bin"
@@ -187,6 +196,9 @@ if [[ $OSTYPE == darwin* ]]; then
   export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
   # Revive Ghostty's global ctrl+space hotkey after macOS kills its event tap
   alias poke-ghostty='bash "$HOME/bin/poke_ghostty.sh"'
+  # vopen host:path — pull one file from a VM into ~/Downloads and open it
+  vopen() { vcp "$1" ~/Downloads && open "$HOME/Downloads/${1:t}" }
+  compdef vopen=scp
   # Opt+Shift+<n> in a split with no tmux: Ghostty sends ESC[901<n>~. Detached
   # and nohup'd, since resizing may close this very split.
   _ghostty_panes() { nohup "$HOME/bin/ghostty_panes.py" "${KEYS[6]}" >/dev/null 2>&1 &! }

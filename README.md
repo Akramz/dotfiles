@@ -33,6 +33,15 @@ Try the whole setup, take just the parts you need, or fork it and make it your o
 - **One skills folder for every agent.** Write a skill once; Claude, Copilot,
   and Codex all get it. ([`claude/skills`](claude/skills)) Copilot also reads
   the same rules as Claude, through links in `~/.copilot/instructions/`.
+- **Less typing in the shell.** Enter on an empty line clears the screen and
+  lists the folder; `cd` and `z` list the new folder; `up` updates brew, Claude
+  Code and Copilot CLI; `vopen vm:path` pulls a file from a VM and opens it. A
+  new shell starts in about 0.2 s: conda loads on first use.
+  ([`home/.zshrc`](home/.zshrc))
+- **Conversations name themselves.** Claude Code already titles each
+  conversation after the first prompt but only shows it in `/resume`; a hook puts
+  it on the prompt bar by the next prompt. `/rename` still wins.
+  ([`auto_title.py`](claude/hooks/auto_title.py))
 - **Keep your machine and the repo in sync.** Some apps replace a linked
   config with a regular file. `./install.sh doctor` detects this;
   `./install.sh pull` copies the changes back into the repo.

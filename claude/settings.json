@@ -32,6 +32,17 @@
         ]
       }
     ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.claude/hooks/auto_title.py"
+          }
+        ]
+      }
+    ],
     "UserPromptExpansion": [
       {
         "matcher": "",
