@@ -25,11 +25,17 @@ No reliable `defaults` key exists for these. Click them.
 - [ ] **Keyboard → Text Input → Input Sources**: remove the ones you don't use.
 - [ ] **Keyboard → Keyboard Shortcuts → Spotlight**: uncheck ⌘Space, so Raycast can take it.
 - [ ] **Desktop & Dock**: confirm *Automatically rearrange Spaces* is off. `install.sh macos` sets it, but a macOS update can turn it back on.
+- [ ] **Apple Intelligence & Siri**: turn Siri off. That's the only clean way to drop *Ask Siri* from every right-click menu.
 
 If you said yes to `install.sh macos`, it already set: key repeat rate and
 delay, reduce motion, autocorrect, autocapitalise and period substitution off,
 Dock recents, autohide and size, Finder list view, and Chrome's
 opt+cmd+up/down tab keys. Some of these need a logout.
+
+`install.sh menu` trims the right-click menu: it hides cluttering Services and
+Share extensions, and opens `config/chrome/policies.mobileconfig` (no Gemini,
+Lens, Cast, Help me write or QR code in Chrome) for you to approve in
+**General → Device Management**.
 
 ## 4. Permissions
 

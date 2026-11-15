@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>PayloadDisplayName</key>
+  <string>Chrome: trim right-click menu</string>
+  <key>PayloadIdentifier</key>
+  <string>space.akramz.chrome-policies</string>
+  <key>PayloadUUID</key>
+  <string>65EC3FE2-4A6A-486A-9AD5-5B20FCBD3BB0</string>
+  <key>PayloadType</key>
+  <string>Configuration</string>
+  <key>PayloadScope</key>
+  <string>User</string>
+  <key>PayloadVersion</key>
+  <integer>1</integer>
+  <key>PayloadContent</key>
+  <array>
+    <dict>
+      <key>PayloadType</key>
+      <string>com.google.Chrome</string>
+      <key>PayloadIdentifier</key>
+      <string>space.akramz.chrome-policies.chrome</string>
+      <key>PayloadUUID</key>
+      <string>A3099489-3D7C-4724-927C-BB27230F8259</string>
+      <key>PayloadVersion</key>
+      <integer>1</integer>
+
+      <key>GeminiSettings</key>
+      <integer>1</integer>
+      <key>HelpMeWriteSettings</key>
+      <integer>2</integer>
+      <key>LensOverlaySettings</key>
+      <integer>1</integer>
+      <key>LensRegionSearchEnabled</key>
+      <false/>
+      <key>SearchContentSharingSettings</key>
+      <integer>1</integer>
+      <key>EnableMediaRouter</key>
+      <false/>
+      <key>QRCodeGeneratorEnabled</key>
+      <false/>
+    </dict>
+  </array>
+</dict>
+</plist>

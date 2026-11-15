@@ -8,7 +8,7 @@
 #   ./install.sh doctor              verify only, changes nothing
 #   ./install.sh pull                copy drifted files back into the repo
 #
-# Stages: brew shell link macos agents vscode python secrets rust
+# Stages: brew shell link macos menu agents vscode python secrets rust
 #         (Linux: brew shell link agents python rust)
 #
 # Two layers sit on top of the repo: personal/ (yours, gitignored; the first
@@ -41,7 +41,7 @@ WITH_WORK=0
 #   bash -c 'uname(){ echo Darwin; }; export -f uname; ./install.sh doctor'
 case "$(uname -s)" in
   Darwin) IS_MAC=1; OS=darwin; BREW_PREFIX=/opt/homebrew; BREWFILE=Brewfile.general; MINIFORGE_OS=MacOSX
-          ALL_STAGES=(brew shell link macos agents vscode python secrets rust) ;;
+          ALL_STAGES=(brew shell link macos menu agents vscode python secrets rust) ;;
   Linux)  IS_MAC=0; OS=linux;  BREW_PREFIX=/home/linuxbrew/.linuxbrew; BREWFILE=Brewfile.linux; MINIFORGE_OS=Linux
           ALL_STAGES=(brew shell link agents python rust)
           # Same as home/.zshenv: npm globals under $HOME, so npm_global works from bash too.
@@ -400,6 +400,118 @@ stage_macos() {
   set_app_shortcut com.google.Chrome "Select Next Tab" '@~\Uf701'
   (( CHANGES > before )) && warn "restart Chrome (cmd+Q) to pick up its shortcuts"
   return 0
+}
+
+# Services that only clutter the right-click menu. Keys are "<bundle id> - <menu item> - <message>",
+# as listed by `/System/Library/CoreServices/pbs -dump_pboard`.
+DISABLED_SERVICES=(
+  "(null) - paste imports - runWorkflowAsService"
+  "com.apple.BluetoothFileExchange - Send File To Bluetooth Device - sendFileUsingBluetoothOBEXService"
+  "com.apple.ChineseTextConverterService - Convert Text from Simplified to Traditional Chinese - convertTextToTraditionalChinese"
+  "com.apple.ChineseTextConverterService - Convert Text from Traditional to Simplified Chinese - convertTextToSimplifiedChinese"
+  "com.apple.ChineseTextConverterService - Convert Text to Full Width - convertTextToFullWidth"
+  "com.apple.ChineseTextConverterService - Convert Text to Half Width - convertTextToHalfWidth"
+  "com.apple.FolderActionsSetup - Folder Actions Setup - openFilesFromPasteboard"
+  "com.apple.QuickTime.service.encodeSelectedAudioFiles - Encode Selected Audio Files - runWorkflowAsService"
+  "com.apple.services.encodeSelectedVideoFiles - Encode Selected Video Files - runWorkflowAsService"
+  "com.apple.Safari - Add to Reading List - addToReadingList"
+  "com.apple.ScriptEditor2 - Script Editor/Make New AppleScript - makeNewAppleScript"
+  "com.apple.ScriptEditor2 - Script Editor/Run as AppleScript - runAsAppleScript"
+  "com.apple.ScriptEditor2 - Script Editor/Get Result of AppleScript - runAsAppleScript"
+  "com.apple.Stickies - Make Sticky - makeStickyFromTextService"
+  "com.apple.Terminal - New Terminal at Folder - newTerminalAtFolder"
+  "com.apple.Terminal - New Terminal Tab at Folder - newTerminalAtFolder"
+  "com.apple.Terminal - Open man Page in Terminal - openManPage"
+  "com.apple.Terminal - Search man Page Index in Terminal - searchManPages"
+  "com.apple.TextEdit - New TextEdit Window Containing Selection - openSelection"
+  "com.apple.TextEdit - Open Selected File in TextEdit - openFile"
+  "com.apple.mail - Mail/New Email With Selection - mailSelection"
+  "com.apple.mail - Mail/New Email To Address - mailTo"
+  "com.apple.services.addToiTunesAsSpokenTrack - Add to Music as a Spoken Track - runWorkflowAsService"
+  "com.apple.services.setDesktopPicture - Set Desktop Picture - runWorkflowAsService"
+  "com.apple.services.showMap - Show Map - runWorkflowAsService"
+  "com.apple.speech.SpeechService - Speech/Start Speaking Text - doSpeakSelectedText"
+  "com.apple.speech.SpeechService - Speech/Stop Speaking - doStopSpeaking"
+  "com.googlecode.iterm2 - New iTerm2 Tab Here - openTab"
+  "com.googlecode.iterm2 - New iTerm2 Window Here - openWindow"
+  "edu.ucsd.cs.mmccrack.bibdesk - BibDesk/Complete Cite Key - completeCiteKeyFromSelection"
+  "edu.ucsd.cs.mmccrack.bibdesk - BibDesk/New Document With Selection - openDocumentFromSelection"
+  "edu.ucsd.cs.mmccrack.bibdesk - BibDesk/Add to Bibliography - addPublicationsFromSelection"
+  "edu.ucsd.cs.mmccrack.bibdesk - BibDesk/Complete Citation - completeCitationFromSelection"
+  "edu.ucsd.cs.mmccrack.bibdesk - BibDesk/Complete Text Bibliography - completeTextBibliographyFromSelection"
+  "edu.ucsd.cs.mmccrack.bibdesk - BibDesk/Complete Rich Text Bibliography - completeRichBibliographyFromSelection"
+  "edu.ucsd.cs.mmccrack.bibdesk - BibDesk/Show Reference With Cite Key - showPubWithKey"
+  "edu.ucsd.cs.mmccrack.bibdesk - BibDesk/Open URL in BibDesk Web Group - openURLInWebGroup"
+  "fr.chachatelier.pierre.LaTeXiT - LaTeXiT/Typeset LaTeX Maths display - serviceLatexisationDisplay"
+  "fr.chachatelier.pierre.LaTeXiT - LaTeXiT/Typeset LaTeX Maths display and put result into clipboard - serviceLatexisationDisplayAndPutIntoClipBoard"
+  "fr.chachatelier.pierre.LaTeXiT - LaTeXiT/Typeset LaTeX Maths inline - serviceLatexisationInline"
+  "fr.chachatelier.pierre.LaTeXiT - LaTeXiT/Typeset LaTeX Maths inline and put result into clipboard - serviceLatexisationInlineAndPutIntoClipBoard"
+  "fr.chachatelier.pierre.LaTeXiT - LaTeXiT/Typeset LaTeX Text - serviceLatexisationText"
+  "fr.chachatelier.pierre.LaTeXiT - LaTeXiT/Typeset LaTeX Text and put result into clipboard - serviceLatexisationTextAndPutIntoClipBoard"
+  "fr.chachatelier.pierre.LaTeXiT - LaTeXiT/Typeset LaTeX Maths align - serviceLatexisationAlign"
+  "fr.chachatelier.pierre.LaTeXiT - LaTeXiT/Typeset LaTeX Maths align and put result into clipboard - serviceLatexisationAlignAndPutIntoClipBoard"
+  "fr.chachatelier.pierre.LaTeXiT - LaTeXiT/Detect and typeset equations - serviceMultiLatexisation"
+  "fr.chachatelier.pierre.LaTeXiT - LaTeXiT/Detect and typeset equations and put result into clipboard - serviceMultiLatexisationAndPutIntoClipBoard"
+  "fr.chachatelier.pierre.LaTeXiT - LaTeXiT/Un-latexize the equations - serviceDeLatexisation"
+)
+
+DISABLED_SHARE_EXTENSIONS=(
+  com.microsoft.onenote.mac.shareextension
+  com.apple.iBooksX.SharingExtension
+  com.apple.freeform.sharingextension
+  com.apple.share.System.add-to-iphoto
+  com.apple.share.System.set-account-picture
+  com.apple.share.System.add-to-safari-reading-list
+)
+
+stage_menu() {
+  stage "menu"
+  confirm "Trim the right-click menu (Services, Share extensions, Chrome)?" \
+    || { skip "right-click menu (declined)"; return 0; }
+  local key id state before after off='{presentation_modes={ContextMenu=0;ServicesMenu=0;TouchBar=0;};}'
+  local msg="${#DISABLED_SERVICES[@]} Services hidden"
+
+  before="$(defaults read pbs NSServicesStatus 2>/dev/null)"
+  for key in "${DISABLED_SERVICES[@]}"; do
+    defaults write pbs NSServicesStatus -dict-add "\"$key\"" "$off"  # quoted: keys like "(null) - ..." don't parse bare
+  done
+  after="$(defaults read pbs NSServicesStatus 2>/dev/null)"
+  if [[ "$before" == "$after" ]]; then
+    same "$msg"
+  else
+    /System/Library/CoreServices/pbs -update
+    changed "$msg"
+  fi
+
+  for id in "${DISABLED_SHARE_EXTENSIONS[@]}"; do
+    state="$(pluginkit -m -i "$id")"
+    [[ -n "$state" ]] || continue
+    if [[ "$state" == -* ]]; then
+      same "share extension off: $id"
+    else
+      pluginkit -e ignore -i "$id" && changed "share extension off: $id"
+    fi
+  done
+
+  # Chrome only honors these policies from a profile (mandatory level); `defaults write`
+  # lands at the recommended level, which they ignore. Installing a profile needs a click.
+  local profile="$DOTFILES/config/chrome/policies.mobileconfig"
+  if python3 - "$profile" "/Library/Managed Preferences/$USER/com.google.Chrome.plist" <<'PY'
+import plistlib, sys
+want = plistlib.load(open(sys.argv[1], "rb"))["PayloadContent"][0]
+want = {k: v for k, v in want.items() if not k.startswith("Payload")}
+try:
+    have = plistlib.load(open(sys.argv[2], "rb"))
+except OSError:
+    sys.exit(1)
+sys.exit(0 if all(have.get(k) == v for k, v in want.items()) else 1)
+PY
+  then
+    same "Chrome policy profile"
+  else
+    open -g "$profile"
+    warn "approve 'Chrome: trim right-click menu' in System Settings > General > Device Management, then restart Chrome"
+  fi
 }
 
 # ════════════════════════════════════════════════════════════════
