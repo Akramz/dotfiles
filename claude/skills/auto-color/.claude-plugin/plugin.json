@@ -1,5 +1,0 @@
-{
-  "name": "auto-color",
-  "version": "0.1.0",
-  "description": "Picks a /color for each chat from the topic of its first prompt"
-}
