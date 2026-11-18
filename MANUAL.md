@@ -33,9 +33,14 @@ Dock recents, autohide and size, Finder list view, and Chrome's
 opt+cmd+up/down tab keys. Some of these need a logout.
 
 `install.sh menu` trims the right-click menu: it hides cluttering Services and
-Share extensions, and opens `config/chrome/policies.mobileconfig` (no Gemini,
+Share extensions, shows the remaining Services in the menu itself (no Services
+submenu; apps pick this up on relaunch), and opens `config/chrome/policies.mobileconfig` (no Gemini,
 Lens, Cast, Help me write or QR code in Chrome) for you to approve in
 **General → Device Management**.
+
+`install.sh link` adds a **Make friendly!** item for selected text. It sends the
+text to Copilot (Haiku), which rewrites it as a short, polite message and copies
+it to the clipboard (~10 s; a notification says when). Review it before pasting.
 
 ## 4. Permissions
 

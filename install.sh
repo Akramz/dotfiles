@@ -119,6 +119,8 @@ LINKS_ALL=(
 LINKS_MAC=(
   "home/bin/poke_ghostty.sh|$HOME/bin/poke_ghostty.sh"
   "home/bin/ghostty_panes.py|$HOME/bin/ghostty_panes.py"
+  "home/bin/make_friendly.sh|$HOME/bin/make_friendly.sh"
+  "config/services/Make friendly!.workflow|$HOME/Library/Services/Make friendly!.workflow"
   "config/ghostty/config|$HOME/Library/Application Support/com.mitchellh.ghostty/config"
   "vscode/settings.json|$HOME/Library/Application Support/Code/User/settings.json"
   "vscode/keybindings.json|$HOME/Library/Application Support/Code/User/keybindings.json"
@@ -425,6 +427,9 @@ DISABLED_SERVICES=(
   "com.apple.Terminal - Search man Page Index in Terminal - searchManPages"
   "com.apple.TextEdit - New TextEdit Window Containing Selection - openSelection"
   "com.apple.TextEdit - Open Selected File in TextEdit - openFile"
+  "com.apple.finder - Finder/Open - open"
+  "com.apple.finder - Finder/Reveal - reveal"
+  "com.apple.finder - Finder/Show Info - showInfo"
   "com.apple.mail - Mail/New Email With Selection - mailSelection"
   "com.apple.mail - Mail/New Email To Address - mailTo"
   "com.apple.services.addToiTunesAsSpokenTrack - Add to Music as a Spoken Track - runWorkflowAsService"
@@ -482,6 +487,8 @@ stage_menu() {
     /System/Library/CoreServices/pbs -update
     changed "$msg"
   fi
+  # Show the remaining Services (Make friendly!, Ask Claude, ...) in the menu itself, not a submenu. Apps pick it up on relaunch.
+  set_default -g NSServicesMinimumItemCountForContextSubmenu int 99
 
   for id in "${DISABLED_SHARE_EXTENSIONS[@]}"; do
     state="$(pluginkit -m -i "$id")"
