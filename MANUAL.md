@@ -61,6 +61,7 @@ macOS will not grant these from a script. Grant them on first launch, or in
 - [ ] Restore `personal/secrets.env`, `personal/ssh-config` and your SSH keys: [`personal.example/README.md`](personal.example/README.md#secrets-from-a-password-manager). Text replacements need a logout.
 - [ ] `/reflect`: save your Toggl API token (Toggl → Profile settings → API Token) to `~/.config/toggl/token`.
 - [ ] `gog` skill (agents read your Google mail, calendar and files):
+  0. `(umask 077; mkdir -p ~/.config/gogcli && openssl rand -base64 32 > ~/.config/gogcli/keyring-password)`, then open a new shell. `home/.zshenv` then keeps gog's tokens in an encrypted file instead of the keychain, whose "Always Allow" resets on every upgrade. Lose the file and you redo steps 2–3.
   1. Create a Google OAuth desktop client (`gog auth setup --help`). Fill Branding's homepage and privacy policy URLs (any public URL works) and press **Publish app** under Audience, or tokens expire after 7 days.
   2. `gog auth credentials set <client.json>`
   3. For each account: `gog auth add <email> --services gmail,calendar,drive,docs,sheets,contacts`
@@ -90,7 +91,7 @@ The rest comes from your company once you enrol:
 
 After `linux/setup.sh` (which ends by running `./install.sh`):
 
-- [ ] The §2 sign-ins and the §6 `gog` step. On a headless box, first run `gog auth keyring file`, put `GOG_KEYRING_PASSWORD` in `personal/zshenv`, and add `--manual` to `gog auth add`. Use `wispr login --no-browser` for the same reason.
+- [ ] The §2 sign-ins and the §6 `gog` step. On a headless box, add `--manual` to `gog auth add`. Use `wispr login --no-browser` for the same reason.
 - [ ] Open a new SSH session. It should land in zsh with the `host:~ %` prompt.
 - [ ] `claude` → `/memory` lists `~/.claude/CLAUDE.md` and the `os.md` import; `/skills` lists the repo skills.
 - [ ] `tmux -V` is 3.3 or newer (brew's), so shift+enter works inside agent TUIs.
