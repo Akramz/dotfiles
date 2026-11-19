@@ -1,5 +1,8 @@
 {
   "cleanupPeriodDays": 36500,
+  "env": {
+    "ENABLE_STOP_REVIEW": "0"
+  },
   "permissions": {
     "allow": [
       "Bash(git push:*)"
@@ -16,9 +19,6 @@
     "defaultMode": "auto"
   },
   "model": "opus",
-  "env": {
-    "ENABLE_STOP_REVIEW": "0"
-  },
   "hooks": {
     "SessionStart": [
       {
@@ -28,6 +28,17 @@
             "type": "command",
             "command": "$HOME/.claude/init-submodules.sh",
             "timeout": 300
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.claude/hooks/sync_memories.sh"
           }
         ]
       }
@@ -113,6 +124,9 @@
       "effortLevel": "high"
     },
     "claude-opus-5-5": {
+      "effortLevel": "high"
+    },
+    "claude-fable-5-2": {
       "effortLevel": "high"
     }
   },
