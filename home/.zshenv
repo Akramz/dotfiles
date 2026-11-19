@@ -10,5 +10,8 @@ export PATH="$HOME/.local/bin:$PATH"
 # gog: encrypted file keyring, not the macOS keychain ("Always Allow" resets on each upgrade; MANUAL §6).
 [[ -r ~/.config/gogcli/keyring-password ]] && export GOG_KEYRING_BACKEND=file GOG_KEYRING_PASSWORD="$(<~/.config/gogcli/keyring-password)"
 
+# copilot: token from a private file, not the macOS keychain (same pop-up problem as gog; MANUAL §6).
+[[ -r ~/.config/copilot/token ]] && export COPILOT_GITHUB_TOKEN="$(<~/.config/copilot/token)"
+
 # Your personal/zshenv, linked here by install.sh (CUDA paths, cache dirs, cloud settings).
 [[ -f "$HOME/.config/zsh/local.zshenv" ]] && source "$HOME/.config/zsh/local.zshenv"
