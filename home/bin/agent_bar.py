@@ -13,6 +13,7 @@ import time
 
 DIR = os.path.expanduser("~/.cache/agent-bar")
 LINE, SPEND, SESSIONS = (os.path.join(DIR, f) for f in ("line", "spend.json", "sessions.json"))
+ME = os.path.abspath(__file__)
 SPEND_TTL = 600
 SHOWN = 3
 
@@ -51,7 +52,7 @@ def spend():
         # Stamp first: other sessions then wait a full TTL, even if the refresh fails.
         save(SPEND, json.dumps({**s, "at": now}))
         if used:
-            subprocess.Popen([sys.executable, __file__, "--refresh-spend"], start_new_session=True,
+            subprocess.Popen([sys.executable, ME, "--refresh-spend"], start_new_session=True,
                              stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     return s["cost"]
 
@@ -87,6 +88,8 @@ def names(label, items):
 
 def main():
     os.makedirs(DIR, exist_ok=True)
+    # Sessions run this from any project folder; npx must not see that folder's node_modules or .npmrc.
+    os.chdir(DIR)
     if sys.argv[1:] == ["--refresh-spend"]:
         return refresh_spend()
     parts = []
