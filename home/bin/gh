@@ -1,0 +1,143 @@
+#!/usr/bin/env python3
+# gh, with the right account for each repo. With two GitHub accounts, gh uses the active one,
+# and a repo only the other can reach answers 404. This finds the repo a command is about
+# (git's credential helper included), asks GitHub once which account has the most access to it
+# (cached for a week), and runs the real gh with that account's token. The active account
+# never changes, so parallel agent sessions don't collide. GH_SHIM=0 turns it off.
+import json
+import os
+import re
+import subprocess
+import sys
+import time
+
+ME = os.path.realpath(__file__)
+CACHE = os.path.expanduser("~/.cache/gh-shim/accounts.json")
+TTL = 7 * 86400
+PLAIN = {"auth", "config", "completion", "alias", "extension", "gpg-key", "ssh-key", "search",
+         "help", "version", "--version", "--help"}
+
+
+def real_gh():
+    for d in os.environ.get("PATH", "").split(os.pathsep):
+        p = os.path.join(d, "gh")
+        if os.access(p, os.X_OK) and os.path.realpath(p) != ME:
+            return p
+    sys.exit("gh shim: the real gh is not on PATH")
+
+
+GH = real_gh()
+
+
+def plain():
+    os.execv(GH, [GH, *sys.argv[1:]])
+
+
+def accounts():
+    try:
+        text = open(os.path.expanduser("~/.config/gh/hosts.yml")).read()
+    except OSError:
+        return [], None
+    host = re.search(r"^github\.com:\n((?:[ \t]+.*\n?)*)", text, re.M)
+    if not host:
+        return [], None
+    active = re.search(r"^ {4}user: (\S+)", host[1], re.M)
+    return re.findall(r"^ {8}(\S+):", host[1], re.M), active and active[1]
+
+
+def split(spec):
+    m = re.search(r"(?:github\.com[/:])?([\w.-]+)/([\w.-]+?)(?:\.git)?/?$", spec)
+    return (m[1], m[2]) if m else None
+
+
+def from_remote():
+    out = subprocess.run(["git", "remote", "-v"], capture_output=True, text=True).stdout
+    urls = dict(line.split()[:2] for line in out.splitlines() if line.strip())
+    url = urls.get("origin") or next(iter(urls.values()), "")
+    return split(url) if "github" in url else None
+
+
+def target(args):
+    if args[:2] == ["auth", "git-credential"]:
+        return from_remote()
+    for i, a in enumerate(args):
+        if a in ("-R", "--repo") and i + 1 < len(args):
+            return split(args[i + 1])
+        if a.startswith("--repo="):
+            return split(a[7:])
+    for a in args:
+        m = re.match(r"(?:https://|git@)github\.com[/:]([\w.-]+)/([\w.-]+?)(?:\.git)?(?:[/#?]|$)", a)
+        if m:
+            return m[1], m[2]
+    if args[0] == "api":
+        for a in args[1:]:
+            m = re.match(r"/?repos/([\w.-]+)/([\w.-]+)", a)
+            if m:
+                return m[1], m[2]
+            m = re.match(r"/?(?:orgs|users)/([\w.-]+)", a)
+            if m:
+                return m[1], None
+    if args[0] == "repo":
+        for a in args[2:]:
+            if re.fullmatch(r"[\w.-]+/[\w.-]+", a):
+                return tuple(a.split("/"))
+        if args[1:2] == ["list"] and len(args) > 2 and not args[2].startswith("-"):
+            return args[2], None
+    return from_remote()
+
+
+def token(account):
+    return subprocess.run([GH, "auth", "token", "--user", account],
+                          capture_output=True, text=True).stdout.strip()
+
+
+def access(owner, repo, tok):
+    # Permissions are cumulative: 0 if the token can't see the repo, 1 (read) to 5 (admin).
+    p = subprocess.run([GH, "api", f"repos/{owner}/{repo}", "--jq", "[.permissions[]|select(.)]|length"],
+                       capture_output=True, text=True, env={**os.environ, "GH_TOKEN": tok})
+    return int(p.stdout or 0) if p.returncode == 0 else 0
+
+
+def pick(owner, repo, names, active):
+    try:
+        cache = json.load(open(CACHE))
+    except (OSError, ValueError):
+        cache = {}
+    key, now = f"{owner}/{repo}".lower(), time.time()
+    if repo:
+        hit = cache.get(key)
+        if hit and now - hit["at"] < TTL and hit["account"] in names:
+            return hit["account"]
+        scores = {n: access(owner, repo, token(n)) for n in names}
+        best = max(names, key=lambda n: (scores[n], n == active))
+        if scores[best]:
+            cache[key] = {"account": best, "at": now}
+            os.makedirs(os.path.dirname(CACHE), exist_ok=True)
+            tmp = f"{CACHE}.{os.getpid()}"
+            json.dump(cache, open(tmp, "w"), indent=1)
+            os.replace(tmp, CACHE)
+            return best
+    # No repo, or one nobody can see yet (gh repo create): go by the owner's other repos.
+    seen = [v["account"] for k, v in cache.items()
+            if k.startswith(owner.lower() + "/") and v["account"] in names]
+    return max(set(seen), key=seen.count) if seen else None
+
+
+def main():
+    args = sys.argv[1:]
+    if (not args or os.environ.get("GH_SHIM") == "0"
+            or (args[0] in PLAIN and args[:2] != ["auth", "git-credential"])
+            or os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN")
+            or os.environ.get("GH_HOST")):
+        plain()
+    names, active = accounts()
+    if len(names) < 2:
+        plain()
+    where = target(args)
+    account = pick(*where, names, active) if where else None
+    if account and account != active and (tok := token(account)):
+        os.environ["GH_TOKEN"] = tok
+    plain()
+
+
+main()

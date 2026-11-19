@@ -5,6 +5,8 @@ done; unset _brew
 # brew shellenv exports FPATH, so every nested shell (tmux, agents) inherits and grows it;
 # oh-my-zsh then sees a new fpath and rebuilds its completion cache (0.5 s) on each start.
 typeset +x FPATH; typeset -U path fpath
+# ~/bin first: ~/bin/gh wraps brew's gh to pick the GitHub account per repo.
+path=("$HOME/bin" $path)
 
 # oh-my-zsh. Themes: https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
 export ZSH="$HOME/.oh-my-zsh"
@@ -132,6 +134,12 @@ cld() { _tp_launch 'claude --permission-mode auto' '' "$@" }
 pc() { _tp_launch "$COPILOT_CMD" copilot "$@" }
 oa() { _tp_launch codex '' "$@" }
 compdef _tp_launch_complete cld pc oa
+# adm [name] — the Copilot session in ~ for mail, calendar and other admin; attaches if it exists.
+# Copilot reads Claude's memory (copilot/memory.md), so admin work need not spend Claude budget.
+adm() {
+  local n=${1:-admin}
+  if command tmux has-session -t "=$n" 2>/dev/null; then tp "$n"; else pc "$n" ~; fi
+}
 
 # vcp — copy files or folders to or from a VM. dest is always a folder; a trailing / never matters.
 #   pull: dest defaults to here.  push: dest defaults to the same folder under ~ as here.

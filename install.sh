@@ -99,6 +99,9 @@ LINKS_ALL=(
   "home/.hushlogin|$HOME/.hushlogin"
 
   "home/bin/agent_usage.py|$HOME/bin/agent_usage.py"
+  "home/bin/agent_bar.py|$HOME/bin/agent_bar.py"
+  "home/bin/gh|$HOME/bin/gh"
+  "config/cd4a/config.json|$HOME/.config/cd4a/config.json"
   "config/tp/tp_tui.py|$HOME/.config/tp/tp_tui.py"
   "config/tmux-resurrect/agents.sh|$HOME/.tmux/plugins/tmux-resurrect/save_command_strategies/agents.sh"
 
@@ -107,6 +110,7 @@ LINKS_ALL=(
   # Copilot reads every ~/.copilot/instructions/*.instructions.md, so it gets the same rules.
   "claude/CLAUDE.md|$HOME/.copilot/instructions/rules.instructions.md"
   "claude/os/$OS.md|$HOME/.copilot/instructions/os.instructions.md"
+  "copilot/memory.md|$HOME/.copilot/instructions/memory.instructions.md"
   "claude/settings.json|$HOME/.claude/settings.json"
   "claude/keybindings.json|$HOME/.claude/keybindings.json"
   "claude/init-submodules.sh|$HOME/.claude/init-submodules.sh"
@@ -133,6 +137,7 @@ LINKS_LAYER=(
   "personal/profile.md|$HOME/.claude/profile.md"
   "personal/profile.md|$HOME/.copilot/instructions/profile.instructions.md"
   "personal/ssh-config|$HOME/.ssh/config"
+  "personal/agent-bar-cap|$HOME/.config/agent-bar/cap"
   "work/claude.md|$HOME/.claude/work.md"
   "work/claude.md|$HOME/.copilot/instructions/work.instructions.md"
 )

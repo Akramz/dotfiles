@@ -41,6 +41,24 @@ Try the whole setup, take just the parts you need, or fork it and make it your o
   conversation after the first prompt but only shows it in `/resume`; a hook puts
   it on the prompt bar by the next prompt. `/rename` still wins.
   ([`auto_title.py`](claude/hooks/auto_title.py))
+- **One line under every Claude prompt.** This month's Claude Code spend against
+  your budget, and the tmux sessions you are not looking at that are *waiting* on
+  you or *done* since you last had them open:
+  `$142 of $200 · waiting: api-2 · done: docs`. Put your monthly budget in
+  `personal/agent-bar-cap`. ([`agent-bar`](claude/skills/agent-bar/hooks/register.ts),
+  [`agent_bar.py`](home/bin/agent_bar.py))
+- **The right GitHub account for each repo.** With two accounts signed in, `gh`
+  picks the one with the most access to the repo a command is about, without
+  switching the active account, so parallel agents don't trip over each other.
+  `git push` and `git fetch` get the same account through the credential helper.
+  ([`home/bin/gh`](home/bin/gh))
+- **Copilot shares Claude's memory.** A rule tells Copilot CLI where Claude Code
+  keeps its per-project memory and how to add to it; `adm` opens a Copilot
+  session in `~` for mail and calendar work. ([`copilot/memory.md`](copilot/memory.md))
+- **Agents browse out of sight.** Chrome DevTools MCP runs headless with a fresh
+  profile per session, so two agents can browse at once and no window takes
+  focus. Delete [`config/cd4a/config.json`](config/cd4a/config.json)'s `isolated`
+  line to keep logins between sessions.
 - **Keep your machine and the repo in sync.** Some apps replace a linked
   config with a regular file. `./install.sh doctor` detects this;
   `./install.sh pull` copies the changes back into the repo.
