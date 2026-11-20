@@ -1,4 +1,5 @@
-// Vendored from pi 1.5.2 examples/extensions/subagent (pi's official subagent extension).
+// Vendored from pi 1.5.2 examples/extensions/subagent (pi's official subagent extension), with one
+// local change: project-local agents always need confirmation (confirmProjectAgents removed).
 /**
  * Subagent Tool - Delegate tasks to specialized agents
  *
@@ -600,9 +601,6 @@ const SubagentParams = Type.Object({
 	tasks: Type.Optional(Type.Array(TaskItem, { description: "Array of {agent, task} for parallel execution" })),
 	chain: Type.Optional(Type.Array(ChainItem, { description: "Array of {agent, task} for sequential execution" })),
 	agentScope: Type.Optional(AgentScopeSchema),
-	confirmProjectAgents: Type.Optional(
-		Type.Boolean({ description: "Prompt before running project-local agents. Default: true.", default: true }),
-	),
 	cwd: Type.Optional(Type.String({ description: "Working directory for the agent process (single mode)" })),
 });
 
@@ -633,7 +631,7 @@ export default function (pi: ExtensionAPI) {
 			};
 			const discovery = discoverAgents(ctx.cwd, agentScope);
 			const agents = discovery.agents;
-			const confirmProjectAgents = params.confirmProjectAgents ?? true;
+			const confirmProjectAgents = true; // local change: the model cannot turn the confirmation off
 
 			const hasChain = (params.chain?.length ?? 0) > 0;
 			const hasTasks = (params.tasks?.length ?? 0) > 0;
