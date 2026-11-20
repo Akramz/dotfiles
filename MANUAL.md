@@ -15,6 +15,7 @@ in `personal/MANUAL.md`.
 - [ ] `gcloud auth login`
 - [ ] `aws configure`, or skip it and use `--no-sign-request` for public buckets.
 - [ ] Sign in to Claude Code (`claude`), Codex (`codex`) and Copilot (`copilot`).
+- [ ] Sign in to pi once on each machine: run `pi`, then `/login github-copilot`, as the GitHub account whose Copilot seat pi should use (on this Mac: the work account). pi keeps the login in `~/.pi/agent/auth.json` and renews it itself. It cannot use the Copilot CLI token from §6: that one gets a 401.
 
 ## 3. System Settings
 

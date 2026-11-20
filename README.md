@@ -5,7 +5,7 @@ between machines. It manages my OS and app settings and installs the software
 I use for personal projects and work.
 
 A big part of the setup is working with coding agents: instructions, shared
-skills, and settings for Claude Code, Copilot CLI, and Codex, plus tmux session
+skills, and settings for Claude Code, Copilot CLI, pi, and Codex, plus tmux session
 management across these CLIs.
 
 Try the whole setup, take just the parts you need, or fork it and make it your own.
@@ -27,11 +27,11 @@ Try the whole setup, take just the parts you need, or fork it and make it your o
   Sessions on your ssh hosts show up too: each VM is a folded `@host` row
   above the open `@local` one, found in the background so a slow or stopped
   VM never holds up the list; Enter opens a VM session without an ssh step first. ([`tp_tui.py`](config/tp/tp_tui.py))
-- **Agents survive a reboot.** Restart the Mac and every Claude and Copilot
+- **Agents survive a reboot.** Restart the Mac and every Claude, Copilot and pi
   pane comes back in the same conversation, not a blank one.
   ([`agents.sh`](config/tmux-resurrect/agents.sh))
 - **One skills folder for every agent.** Write a skill once; Claude, Copilot,
-  and Codex all get it. ([`claude/skills`](claude/skills)) Copilot also reads
+  pi and Codex all get it. ([`claude/skills`](claude/skills)) Copilot also reads
   the same rules as Claude, through links in `~/.copilot/instructions/`.
 - **Less typing in the shell.** `cd` and `z` list the new folder; `up` updates
   brew, Claude Code and Copilot CLI; `vopen vm:path` pulls a file from a VM and
@@ -52,9 +52,16 @@ Try the whole setup, take just the parts you need, or fork it and make it your o
   switching the active account, so parallel agents don't trip over each other.
   `git push` and `git fetch` get the same account through the credential helper.
   ([`home/bin/gh`](home/bin/gh))
-- **Copilot shares Claude's memory.** A rule tells Copilot CLI where Claude Code
-  keeps its per-project memory and how to add to it; `adm` opens a Copilot
-  session in `~` for mail and calendar work. ([`copilot/memory.md`](copilot/memory.md))
+- **pi that feels like Claude Code.** [pi](https://pi.dev) runs Opus 5.5 at
+  high effort on a GitHub Copilot seat, so it doesn't spend Claude budget. Small
+  extensions give it what Claude Code has: `CLAUDE.md` with its `@` imports, the
+  per-project memory, skills and plugins by their Claude names (`/push`, not
+  `/skill:push`), plugin MCP servers, vim keys, sessions that name themselves,
+  the agent-bar line, and `/bye`. `pie name [dir]` starts it in tmux, like `cld`;
+  `adm` opens a pi session in `~` for mail and calendar work. ([`pi/`](pi))
+- **Copilot shares Claude's memory.** A rule tells Copilot CLI (and pi) where
+  Claude Code keeps its per-project memory and how to add to it.
+  ([`copilot/memory.md`](copilot/memory.md))
 - **Agents browse out of sight.** Chrome DevTools MCP runs headless with a fresh
   profile per session, so two agents can browse at once and no window takes
   focus. Delete [`config/cd4a/config.json`](config/cd4a/config.json)'s `isolated`
@@ -79,8 +86,9 @@ You don't need the whole setup.
 
 **`tp`** (tmux, zsh, Python 3, no packages): copy
 [`config/tp/tp_tui.py`](config/tp/tp_tui.py) to `~/.config/tp/` and the `tp`,
-`_tp_new`, `_tp_new_remote` and `_tp_new_copilot` functions and `COPILOT_CMD` from [`home/.zshrc`](home/.zshrc) into your
-`~/.zshrc`. The state tags read Claude Code's pane text; tune `WORKING_RE` and
+`_tp_new`, `_tp_new_remote`, `_tp_launch` and `pie` functions from [`home/.zshrc`](home/.zshrc) into your
+`~/.zshrc` (ctrl-a in `tp` starts a pi session; point it at another agent in `tp`'s
+`create` branch). The state tags read Claude Code's and pi's pane text; tune `WORKING_RE` and
 `WAITING_RE` for other agents.
 
 **Agents that resume after a reboot**: install
@@ -104,7 +112,7 @@ give Ghostty Accessibility access. If the shortcut stops working, run
 ## Install it all
 
 > [!WARNING]
-> Claude runs in auto mode and Copilot without permission prompts. Read [Safety defaults](#safety-defaults)
+> Claude runs in auto mode, and Copilot and pi without permission prompts. Read [Safety defaults](#safety-defaults)
 > before you install.
 
 ```sh
@@ -142,7 +150,8 @@ before using this setup.
 | Where | What it does |
 |---|---|
 | `cld` in [`home/.zshrc`](home/.zshrc) | `claude --permission-mode auto`: a classifier approves routine actions; risky ones still ask. `cld test [dir]` starts it in dir (default: here); `cld test vm:dir` runs it in tmux on an ssh host (`vm:` alone is its `~`), survives disconnects, and reattaches when rerun. Dash args pass through: `cld test --chrome` gives the session browser tools |
-| `pc`, and Enter in `tp` | `copilot` on Opus 5.5, interactive mode (`COPILOT_CMD` in `.zshrc`). `pc` and `oa` (Codex) take the same arguments as `cld` |
+| `pie`, `adm`, and ctrl-a in `tp` | `pi` on Opus 5.5 through GitHub Copilot. pi has no permission prompts: every tool call runs. It trusts every folder (`defaultProjectTrust` in [`pi/settings.json`](pi/settings.json)), so a repo's `.pi/` extensions load without asking |
+| `pc` | `copilot` on Opus 5.5, interactive mode (`COPILOT_CMD` in `.zshrc`). `pc` and `oa` (Codex) take the same arguments as `cld` |
 | [`claude/settings.json`](claude/settings.json) | auto mode, `git push` allowed |
 | [`copilot/settings.json`](copilot/settings.json) | `allow-all` permissions, high effort, GitHub MCP server off |
 | [`vscode/settings.json`](vscode/settings.json) | agent tools auto-approved; every commit pushes; untrusted files open without asking |
@@ -156,7 +165,8 @@ before using this setup.
 | [`install.sh`](install.sh) | one script: install, `doctor`, `pull` |
 | [`home/`](home) | zsh, tmux, and Git configs, plus small scripts for `~/bin` |
 | [`config/`](config) | `tp`, the resurrect strategy, Ghostty |
-| [`claude/`](claude) | agent instructions, settings, and skills (shared with Copilot and Codex) |
+| [`claude/`](claude) | agent instructions, settings, and skills (shared with Copilot, pi and Codex) |
+| [`pi/`](pi) | pi settings and the extensions that make it work like Claude Code |
 | [`copilot/`](copilot), [`vscode/`](vscode) | their settings |
 | `Brewfile.general`, `Brewfile.linux` | apps and tools for macOS, with a smaller set for Linux |
 | [`environments/base.yml`](environments/base.yml) | the base Python environment (macOS) |

@@ -118,6 +118,14 @@ LINKS_ALL=(
   "claude/skills|$HOME/.claude/skills"
   "claude/skills|$HOME/.copilot/skills"
   "copilot/settings.json|$HOME/.copilot/settings.json"
+  # pi reads one context file from its agent dir; pi/extensions/claude-context.ts expands
+  # its @ imports and loads the project memory, as Claude Code does.
+  "claude/CLAUDE.md|$HOME/.pi/agent/AGENTS.md"
+  "copilot/memory.md|$HOME/.pi/agent/memory.md"
+  "claude/skills|$HOME/.pi/agent/skills"
+  "pi/settings.json|$HOME/.pi/agent/settings.json"
+  "pi/APPEND_SYSTEM.md|$HOME/.pi/agent/APPEND_SYSTEM.md"
+  "pi/extensions|$HOME/.pi/agent/extensions"
 )
 
 LINKS_MAC=(
@@ -585,6 +593,7 @@ stage_agents() {
   if (( IS_MAC )); then
     # `copilot` comes from the copilot-cli cask in the Brewfile.
     have copilot && same "copilot" || warn "copilot missing — run ./install.sh brew"
+    have pi && same "pi" || warn "pi missing — run ./install.sh brew"
 
     # codex comes from the codex cask in the Brewfile (see stage_brew) — npm's
     # @openai/codex fetches its native binary on first run, which
@@ -593,6 +602,8 @@ stage_agents() {
   else
     # Linux: GitHub's installer for copilot; codex came from npm above (no Gatekeeper).
     ensure_bin copilot "copilot install" bash -c 'curl -fsSL https://gh.io/copilot-install | bash'
+    # pi's own installer, not brew: the formula pulls in a brew node (see Brewfile.linux).
+    ensure_bin pi "pi install" bash -c 'curl -fsSL https://pi.dev/install.sh | sh'
   fi
 }
 

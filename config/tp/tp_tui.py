@@ -22,7 +22,7 @@ Interaction (always-on type-to-filter):
   Left          collapse it (on a session, jump to & collapse its project)
   Enter         project -> pick sessions to open across Ghostty splits
                 session -> attach to it
-  Ctrl-A        name a new Copilot CLI session in the project & enter it
+  Ctrl-A        name a new pi session in the project & enter it
   Ctrl-D        delete (project = all its sessions; session = just it), confirmed
   Esc / Ctrl-C  quit
 
@@ -55,7 +55,8 @@ TMUX = shutil.which("tmux") or "/opt/homebrew/bin/tmux"
 # --- live status ---------------------------------------------------------- #
 # How a Claude (--permission-mode auto) pane reads, per state. Tune these against
 # real `tmux capture-pane -p -t <session>` output if a state is misread.
-WORKING_RE = re.compile(r"esc to interrupt", re.I)          # actively generating
+# Claude prints "esc to interrupt"; pi prints a braille spinner and "Working".
+WORKING_RE = re.compile(r"esc to interrupt|^ *[\u2800-\u28ff] Working", re.I | re.M)
 # Blocked-needs-you = an interactive numbered selection cursor (`❯ 1.`), which
 # every Claude dialog renders (permission / plan-approval / question), plus the
 # exact permission phrase. Kept specific so ordinary prose ("would you like…")

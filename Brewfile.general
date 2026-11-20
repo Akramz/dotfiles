@@ -80,6 +80,7 @@ cask "codex"              # npm's @openai/codex fetches its native binary on
                            # first run, which Gatekeeper/XProtect has blocked
                            # as malware; the cask ships a signed release instead
 cask "copilot-cli"        # the `copilot` CLI used by tp / pc
+brew "pi-coding-agent"    # the `pi` CLI used by tp / pie / adm
 
 # ── knowledge ───────────────────────────────────────────────────
 cask "obsidian"

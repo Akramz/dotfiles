@@ -1,0 +1,22 @@
+{
+  "$schema": "https://pi.dev/schemas/settings.schema.json",
+  "defaultProvider": "github-copilot",
+  "defaultModel": "claude-opus-5.5",
+  "defaultThinkingLevel": "high",
+  "enabledModels": [
+    "github-copilot/claude-opus-5.5",
+    "github-copilot/claude-sonnet-5.5",
+    "github-copilot/claude-haiku-5.5"
+  ],
+  "defaultProjectTrust": "always",
+  "cacheWarming": "off",
+  "quietStartup": "header",
+  "theme": "dark",
+  "collapseChangelog": true,
+  "enableInstallTelemetry": false,
+  "lastChangelogVersion": "1.5.2",
+  "skills": [
+    "!**/synced/**"
+  ],
+  "enableSkillCommands": false
+}

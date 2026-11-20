@@ -2,7 +2,7 @@
 # tmux-resurrect save strategy (linked into its save_command_strategies/).
 # Like the default ps strategy, except tp starts agents as the pane's own
 # process rather than under a shell, so a non-shell pane saves itself.
-# claude and copilot panes save a command that reopens their own chat by ID,
+# claude, copilot and pi panes save a command that reopens their own chat by ID,
 # or a fresh start when none is found; --continue would reopen whichever chat
 # is newest in the directory.
 
@@ -24,7 +24,7 @@ set -f; set -- $args; set +f
 case "${1##*/}" in node*|python*|Python|bun|deno) shift ;; esac
 agent="${1##*/}"
 case "$agent" in
-  claude|copilot) shift ;;
+  claude|copilot|pi) shift ;;
   *) printf '%s\n' "$args"; exit 0 ;;
 esac
 
@@ -39,7 +39,11 @@ while [ $# -gt 0 ]; do
   shift
 done
 
-if [ "$agent" = claude ]; then
+if [ "$agent" = pi ]; then
+  # pi/extensions/claude-hooks.ts writes the session file of each pi process here.
+  f="$(cat "$HOME/.pi/agent/pids/$pid" 2>/dev/null)"
+  [ -s "$f" ] && out="$out --session $f"
+elif [ "$agent" = claude ]; then
   id="$(python3 -c 'import json, sys; print(json.load(open(sys.argv[1]))["sessionId"])' \
     "$HOME/.claude/sessions/$pid.json" 2>/dev/null)"
   [ -n "$id" ] && ls "$HOME"/.claude/projects/*/"$id".jsonl >/dev/null 2>&1 &&

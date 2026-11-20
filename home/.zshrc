@@ -77,7 +77,6 @@ _tp_new_remote() {
 # Org policy overrides the model in settings.json; only --model sticks.
 COPILOT_CMD='copilot --model claude-opus-5.5'
 alias copilot=$COPILOT_CMD
-_tp_new_copilot() { _tp_new "$1" "${2:-$PWD}" "$COPILOT_CMD" }
 # tp [name] — project-grouped tmux session picker (TUI: ~/.config/tp/tp_tui.py)
 # with a name: attach if that session exists, else open the picker filtered by it
 tp() {
@@ -106,7 +105,7 @@ tp() {
       fi
       ;;
     create)
-      _tp_new_copilot "$parts[3]" "$parts[2]"
+      pie "$parts[3]" "$parts[2]"
       ;;
   esac
 }
@@ -128,17 +127,18 @@ _tp_launch_complete() {
   else _alternative 'folders:folder:_path_files -/' 'hosts:host:_ssh_hosts -S:'
   fi
 }
-# cld / pc / oa <name> [dir | host:dir] [--flag…]   new Claude / Copilot / Codex session in dir
+# cld / pc / pie / oa <name> [dir | host:dir] [--flag…]   new Claude / Copilot / pi / Codex session in dir
 # (default: here), or on an ssh host (host: alone is its ~); dash args go to the CLI
 cld() { _tp_launch 'claude --permission-mode auto' '' "$@" }
 pc() { _tp_launch "$COPILOT_CMD" copilot "$@" }
+pie() { _tp_launch pi pi "$@" }
 oa() { _tp_launch codex '' "$@" }
-compdef _tp_launch_complete cld pc oa
-# adm [name] — the Copilot session in ~ for mail, calendar and other admin; attaches if it exists.
-# Copilot reads Claude's memory (copilot/memory.md), so admin work need not spend Claude budget.
+compdef _tp_launch_complete cld pc pie oa
+# adm [name] — the pi session in ~ for mail, calendar and other admin; attaches if it exists.
+# pi reads Claude's memory (pi/extensions/claude-context.ts), so admin work need not spend Claude budget.
 adm() {
   local n=${1:-admin}
-  if command tmux has-session -t "=$n" 2>/dev/null; then tp "$n"; else pc "$n" ~; fi
+  if command tmux has-session -t "=$n" 2>/dev/null; then tp "$n"; else pie "$n" ~; fi
 }
 
 # vcp — copy files or folders to or from a VM. dest is always a folder; a trailing / never matters.
