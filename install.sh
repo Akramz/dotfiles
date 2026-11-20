@@ -145,7 +145,6 @@ LINKS_LAYER=(
   "personal/profile.md|$HOME/.claude/profile.md"
   "personal/profile.md|$HOME/.copilot/instructions/profile.instructions.md"
   "personal/ssh-config|$HOME/.ssh/config"
-  "personal/agent-bar-cap|$HOME/.config/agent-bar/cap"
   "work/claude.md|$HOME/.claude/work.md"
   "work/claude.md|$HOME/.copilot/instructions/work.instructions.md"
 )

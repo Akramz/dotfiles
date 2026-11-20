@@ -15,7 +15,6 @@ folder to `personal/`, which is gitignored. Edit the copies, then run
 | `skills/<name>/` | symlinked into `claude/skills/<name>` | private skills; Claude, Copilot and Codex all see them. `.git/info/exclude` keeps them out of the repo's `git status` |
 | `secrets.env` | macOS text replacements | `key=value` lines; typing `>key` anywhere expands to the value. Shape: `secrets.example.env` |
 | `ssh-config` | linked to `~/.ssh/config` | your ssh hosts; keep it mode 600. Shape: `ssh-config.example` |
-| `agent-bar-cap` | linked to `~/.config/agent-bar/cap` | your monthly Claude budget in dollars, one number; the line under the prompt shows spend against it |
 
 `install.sh` links only the files you have. Delete what you don't need.
 `ssh-config` takes effect with `./install.sh link`, `secrets.env` with `./install.sh secrets`; text

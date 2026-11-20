@@ -41,11 +41,11 @@ Try the whole setup, take just the parts you need, or fork it and make it your o
   conversation after the first prompt but only shows it in `/resume`; a hook puts
   it on the prompt bar by the next prompt. `/rename` still wins.
   ([`auto_title.py`](claude/hooks/auto_title.py))
-- **One line under every Claude prompt.** This month's Claude Code spend against
-  your budget, and the tmux sessions you are not looking at that are *waiting* on
-  you or *done* since you last had them open:
-  `$142 of $200 · waiting: api-2 · done: docs`. Put your monthly budget in
-  `personal/agent-bar-cap`. ([`agent-bar`](claude/skills/agent-bar/hooks/register.ts),
+- **One line under every Claude and pi prompt.** This calendar month's spend
+  across every coding CLI ccusage reads (Claude Code, Copilot, pi, ...), and the
+  tmux sessions you are not looking at that are *waiting* on you or *done* since
+  you last had them open: `$142 this month · waiting: api-2 · done: docs`.
+  ([`agent-bar`](claude/skills/agent-bar/hooks/register.ts),
   [`agent_bar.py`](home/bin/agent_bar.py))
 - **The right GitHub account for each repo.** With two accounts signed in, `gh`
   picks the one with the most access to the repo a command is about, without

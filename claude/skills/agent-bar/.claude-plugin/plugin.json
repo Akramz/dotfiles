@@ -1,5 +1,5 @@
 {
   "name": "agent-bar",
   "version": "0.1.0",
-  "description": "Pins this month's Claude spend and the tmux sessions that need you under the prompt"
+  "description": "Pins this month's spend across coding CLIs and the tmux sessions that need you under the prompt"
 }
