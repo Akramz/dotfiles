@@ -73,6 +73,7 @@ macOS will not grant these from a script. Grant them on first launch, or in
   4. `gog auth alias set <alias> <email>` for each. The skill searches every alias unless you name one.
 - [ ] Copilot without keychain pop-ups: after signing in, `(umask 077; mkdir -p ~/.config/copilot && security find-generic-password -s copilot-cli -w > ~/.config/copilot/token)`, then open a new shell. `home/.zshenv` exports it as `COPILOT_GITHUB_TOKEN`. Redo it if you sign in again.
 - [ ] `wispr` skill (agents read your Wispr Flow meetings, transcripts and notes): `wispr login`. Tokens stay in `~/.config/wispr/auth.json`; sign in on each machine instead of copying the file.
+- [ ] `hf` (agents pull Hugging Face models and datasets): `hf auth login` with a read token from huggingface.co/settings/tokens. It saves to `~/.cache/huggingface/token`; sign in on each machine.
 
 ## 7. Work machine (`--with-work`)
 

@@ -575,6 +575,11 @@ stage_agents() {
   (( IS_MAC )) || ensure_bin codex "npm i -g @openai/codex" npm i -g @openai/codex
   (( WITH_WORK )) && ensure_bin workiq "npm i -g @microsoft/workiq" npm i -g @microsoft/workiq
   ensure_bin wispr "uv tool install wispr-cli" uv tool install git+https://github.com/Akramz/wispr-cli
+  ensure_bin hf "uv tool install huggingface_hub" uv tool install huggingface_hub
+  # Agent skill generated from the installed CLI; lands as a gitignored link in claude/skills.
+  if have hf && [[ ! -e "$HOME/.agents/skills/hf-cli" ]]; then
+    hf skills add -g >/dev/null 2>&1 && changed "hf-cli skill" || fail "hf skills add failed"
+  fi
   (( WITH_WORK && IS_MAC )) && desktop_workiq_mcp
 
   if (( IS_MAC )); then
