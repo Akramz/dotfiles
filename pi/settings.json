@@ -3,6 +3,7 @@
   "defaultProvider": "github-copilot",
   "defaultModel": "claude-opus-5.5",
   "defaultThinkingLevel": "high",
+  "hideThinkingBlock": true,
   "enabledModels": [
     "github-copilot/claude-opus-5.5",
     "github-copilot/claude-sonnet-5.5",
