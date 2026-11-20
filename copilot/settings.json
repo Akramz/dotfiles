@@ -8,8 +8,12 @@
     "github-mcp-server"
   ],
   "banner": "never",
-  "tabs": { "enabled": false },
-  "sidebar": { "enabled": false },
+  "tabs": {
+    "enabled": false
+  },
+  "sidebar": {
+    "enabled": false
+  },
   "scrollbar": false,
   "footer": {
     "showModelEffort": true,
@@ -26,5 +30,10 @@
     "showCiStatus": false,
     "showSchedules": false,
     "showPullRequest": false
+  },
+  "enabledPlugins": {
+    "html-plan@claude-community": true,
+    "mpc@mpc": true,
+    "html-explain@html-explain": true
   }
 }

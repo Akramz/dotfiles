@@ -111,6 +111,8 @@ LINKS_ALL=(
   "claude/CLAUDE.md|$HOME/.copilot/instructions/rules.instructions.md"
   "claude/os/$OS.md|$HOME/.copilot/instructions/os.instructions.md"
   "copilot/memory.md|$HOME/.copilot/instructions/memory.instructions.md"
+  # Copilot ignores hook context, so it gets the /html-plan Goal Verification rule as an instruction.
+  "claude/hooks/html_plan_rule.md|$HOME/.copilot/instructions/html-plan.instructions.md"
   "claude/settings.json|$HOME/.claude/settings.json"
   "claude/keybindings.json|$HOME/.claude/keybindings.json"
   "claude/init-submodules.sh|$HOME/.claude/init-submodules.sh"
@@ -126,6 +128,8 @@ LINKS_ALL=(
   "pi/settings.json|$HOME/.pi/agent/settings.json"
   "pi/APPEND_SYSTEM.md|$HOME/.pi/agent/APPEND_SYSTEM.md"
   "pi/extensions|$HOME/.pi/agent/extensions"
+  # Agents for the subagent extension (pi/extensions/subagent).
+  "pi/agents|$HOME/.pi/agent/agents"
 )
 
 LINKS_MAC=(
@@ -170,6 +174,12 @@ build_links() {
     [[ -f "$d/SKILL.md" ]] || continue   # skips synced/ and stray dirs
     name="${d%/}"; name="${name##*/}"
     LINKS+=("claude/skills/$name|$HOME/.codex/skills/$name")
+  done
+  # pi and Copilot also read ~/.agents/skills; Claude Code does not, so its built-in /simplify and
+  # /code-review stay. One link per skill: `hf skills add -g` writes into that folder too.
+  for d in "$DOTFILES"/agents/skills/*/; do
+    name="${d%/}"; name="${name##*/}"
+    LINKS+=("agents/skills/$name|$HOME/.agents/skills/$name")
   done
 }
 
@@ -573,6 +583,48 @@ PY
   changed "Claude Desktop workiq MCP (restart Claude Desktop)"
 }
 
+# Copilot reads Claude Code plugins, so give it the ones Claude Code enables (minus its @builtin ones).
+copilot_plugins() {
+  have copilot || return 0
+  local known installed plugin repo direct
+  known=$(copilot plugin marketplace list 2>/dev/null)
+  installed=$(copilot plugin list 2>/dev/null)
+  # Each line: plugin@marketplace, the marketplace repo, and a direct repo source for when Copilot
+  # rejects that marketplace (it refuses anthropics/claude-plugins-official over one entry).
+  while read -r plugin repo direct; do
+    if [[ "$installed" == *"${plugin%@*}"* ]]; then same "copilot plugin $plugin"; continue; fi
+    if [[ "$known" != *"$repo"* ]] && copilot plugin marketplace add "$repo" >/dev/null 2>&1; then
+      known+=" $repo"; changed "copilot marketplace $repo"
+    fi
+    if copilot plugin install "$plugin" >/dev/null 2>&1 || { [[ -n "$direct" ]] && copilot plugin install "$direct" >/dev/null 2>&1; }; then
+      changed "copilot plugin $plugin"
+    else
+      warn "copilot plugin install $plugin failed"
+    fi
+  done < <(python3 - "$DOTFILES/claude/settings.json" "$HOME/.claude/plugins" <<'PY'
+import json, re, sys
+enabled = json.load(open(sys.argv[1])).get("enabledPlugins", {})
+known = json.load(open(f"{sys.argv[2]}/known_marketplaces.json"))
+for key, on in enabled.items():
+    if not on or key.endswith("@builtin"):
+        continue
+    name, mkt = key.rsplit("@", 1)
+    repo = known.get(mkt, {}).get("source", {}).get("repo", "-")
+    direct = ""
+    try:
+        entry = next(p for p in json.load(open(f"{sys.argv[2]}/marketplaces/{mkt}/.claude-plugin/marketplace.json"))["plugins"] if p["name"] == name)
+        src = entry["source"]
+        if isinstance(src, str):
+            direct = f"{repo}:{src.removeprefix('./')}"
+        elif m := re.match(r"https://github.com/([^/]+/[^/.]+)", src.get("url", "")):
+            direct = m.group(1)
+    except Exception:
+        pass
+    print(key, repo, direct)
+PY
+)
+}
+
 stage_agents() {
   stage "agents"
 
@@ -588,6 +640,7 @@ stage_agents() {
     hf skills add -g >/dev/null 2>&1 && changed "hf-cli skill" || fail "hf skills add failed"
   fi
   (( WITH_WORK && IS_MAC )) && desktop_workiq_mcp
+  copilot_plugins
 
   if (( IS_MAC )); then
     # `copilot` comes from the copilot-cli cask in the Brewfile.

@@ -1,4 +1,4 @@
-// Skills and MCP servers the Claude Code way: `/push` instead of `/skill:push`, the skills and
+// Skills, commands and MCP servers the Claude Code way: `/push` instead of `/skill:push`, the skills and
 // MCP servers of the plugins enabled in ~/.claude/settings.json, and Claude's own MCP servers.
 import { existsSync, readdirSync, readFileSync, realpathSync } from "node:fs";
 import { homedir } from "node:os";
@@ -43,7 +43,12 @@ export default function (pi: ExtensionAPI) {
 		// In ~ this is the user skills folder, which pi already loads as ~/.pi/agent/skills.
 		const project = join(event.cwd, ".claude", "skills");
 		const isProject = existsSync(project) && realpathSync(project) !== realpathSync(`${home}/.claude/skills`);
-		return { skillPaths: [...skillDirs, ...(isProject ? [project] : [])] };
+		// Claude Code slash commands (.claude/commands/*.md) are plain prompts, which pi calls prompt templates.
+		const commands = [`${home}/.claude/commands`, join(event.cwd, ".claude", "commands")].filter(existsSync);
+		return {
+			skillPaths: [...skillDirs, ...(isProject ? [project] : [])],
+			promptPaths: [...new Set(commands.map((p) => realpathSync(p)))],
+		};
 	});
 
 	const servers = {
@@ -61,7 +66,7 @@ export default function (pi: ExtensionAPI) {
 
 	// Register `/name` now, so it autocompletes. claude-hooks.ts owns /bye.
 	const seen = new Set(["bye"]);
-	for (const dir of [`${home}/.pi/agent/skills`, ...skillDirs]) {
+	for (const dir of [`${home}/.pi/agent/skills`, `${home}/.agents/skills`, ...skillDirs]) {
 		for (const s of loadSkillsFromDir({ dir, source: "claude" }).skills) {
 			if (seen.has(s.name)) continue;
 			seen.add(s.name);
