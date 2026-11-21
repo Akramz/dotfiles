@@ -51,9 +51,6 @@ _tp_new_remote() {
   local rcmd="exec \"\$(command -v zsh || echo \"\$SHELL\")\" -ilc ${(q)inner}"
   _tp_new "$1@$host" "$PWD" "ssh -t ${(q)host} ${(q)rcmd} || sleep 5"
 }
-# Org policy overrides the model in settings.json; only --model sticks.
-COPILOT_CMD='copilot --model claude-opus-5.5'
-alias copilot=$COPILOT_CMD
 # tp [name] — project-grouped tmux session picker (TUI: ~/.config/tp/tp_tui.py)
 # with a name: attach if that session exists, else open the picker filtered by it
 tp() {
@@ -104,12 +101,11 @@ _tp_launch_complete() {
   else _alternative 'folders:folder:_path_files -/' 'hosts:host:_ssh_hosts -S:'
   fi
 }
-# cld / pc / pie <name> [dir | host:dir] [--flag…]   new Claude / Copilot / pi session in dir
+# cld / pie <name> [dir | host:dir] [--flag…]   new Claude / pi session in dir
 # (default: here), or on an ssh host (host: alone is its ~); dash args go to the CLI
 cld() { _tp_launch 'claude --permission-mode auto' '' "$@" }
-pc() { _tp_launch "$COPILOT_CMD" copilot "$@" }
 pie() { _tp_launch pi pi "$@" }
-compdef _tp_launch_complete cld pc pie
+compdef _tp_launch_complete cld pie
 # adm [name] — the pi session in ~ for mail, calendar and other admin; attaches if it exists.
 # pi reads Claude's memory (pi/extensions/claude-context.ts), so admin work need not spend Claude budget.
 adm() {
@@ -155,7 +151,7 @@ autoload -Uz add-zsh-hook
 add-zsh-hook chpwd _ls_after_cd
 
 # up — update brew and the agent CLIs in one go; stops at the first failure.
-up() { brew update && brew upgrade && brew autoremove && command claude update && command copilot update }
+up() { brew update && brew upgrade && brew autoremove && command claude update }
 
 # Claude Code: use the system rg instead of its bundled one
 export USE_BUILTIN_RIPGREP=0
@@ -163,7 +159,7 @@ export PATH="$PATH:$HOME/go/bin"
 
 # For Claude
 export CLAUDE_CODE_NO_FLICKER=1
-# Claude Code + Copilot CLI usage figure: agent-usage [SINCE UNTIL] (default last Mon–Sat)
+# Claude Code + pi usage figure: agent-usage [SINCE UNTIL] (default last Mon–Sat)
 alias agent-usage='"$HOME/bin/agent_usage.py"'
 
 # macOS-only bits.

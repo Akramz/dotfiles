@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Adds a "Goal Verification" section to every /html-plan plan, without forking the plugin.
 # UserPromptExpansion / PostToolUse(Skill): inject the rule. PostToolUse(Bash pack.mjs): reject plans without it.
-# The rule lives in html_plan_rule.md, which Copilot also reads as an instructions file (install.sh).
+# The rule lives in html_plan_rule.md.
 import json
 import os
 import re

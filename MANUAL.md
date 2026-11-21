@@ -14,8 +14,8 @@ in `personal/MANUAL.md`.
 - [ ] `az login`
 - [ ] `gcloud auth login`
 - [ ] `aws configure`, or skip it and use `--no-sign-request` for public buckets.
-- [ ] Sign in to Claude Code (`claude`) and Copilot (`copilot`).
-- [ ] Sign in to pi once on each machine: run `pi`, then `/login github-copilot`, as the GitHub account whose Copilot seat pi should use (on this Mac: the work account). pi keeps the login in `~/.pi/agent/auth.json` and renews it itself. It cannot use the Copilot CLI token from §6: that one gets a 401.
+- [ ] Sign in to Claude Code (`claude`).
+- [ ] Sign in to pi once on each machine: run `pi`, then `/login github-copilot`, as the GitHub account whose Copilot seat pi should use (on this Mac: the work account). pi keeps the login in `~/.pi/agent/auth.json` and renews it itself.
 
 ## 3. System Settings
 
@@ -38,10 +38,6 @@ Share extensions, shows the remaining Services in the menu itself (no Services
 submenu; apps pick this up on relaunch), and opens `config/chrome/policies.mobileconfig` (no Gemini,
 Lens, Cast, Help me write or QR code in Chrome) for you to approve in
 **General → Device Management**.
-
-`install.sh link` adds a **Make friendly!** item for selected text. It sends the
-text to Copilot (Haiku), which rewrites it as a short, polite message and copies
-it to the clipboard (~10 s; a notification says when). Review it before pasting.
 
 ## 4. Permissions
 
@@ -72,7 +68,6 @@ macOS will not grant these from a script. Grant them on first launch, or in
   2. `gog auth credentials set <client.json>`
   3. For each account: `gog auth add <email> --services gmail,calendar,drive,docs,sheets,contacts`
   4. `gog auth alias set <alias> <email>` for each. The skill searches every alias unless you name one.
-- [ ] Copilot without keychain pop-ups: after signing in, `(umask 077; mkdir -p ~/.config/copilot && security find-generic-password -s copilot-cli -w > ~/.config/copilot/token)`, then open a new shell. `home/.zshenv` exports it as `COPILOT_GITHUB_TOKEN`. Redo it if you sign in again.
 - [ ] `wispr` skill (agents read your Wispr Flow meetings, transcripts and notes): `wispr login`. Tokens stay in `~/.config/wispr/auth.json`; sign in on each machine instead of copying the file.
 - [ ] `hf` (agents pull Hugging Face models and datasets): `hf auth login` with a read token from huggingface.co/settings/tokens. It saves to `~/.cache/huggingface/token`; sign in on each machine.
 

@@ -12,4 +12,3 @@ __pycache__/
 # Runtime artifacts
 claude/skills/synced/
 claude/skills/hf-cli
-copilot/settings.json.lock

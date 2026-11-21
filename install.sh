@@ -107,23 +107,15 @@ LINKS_ALL=(
 
   "claude/CLAUDE.md|$HOME/.claude/CLAUDE.md"
   "claude/os/$OS.md|$HOME/.claude/os.md"
-  # Copilot reads every ~/.copilot/instructions/*.instructions.md, so it gets the same rules.
-  "claude/CLAUDE.md|$HOME/.copilot/instructions/rules.instructions.md"
-  "claude/os/$OS.md|$HOME/.copilot/instructions/os.instructions.md"
-  "copilot/memory.md|$HOME/.copilot/instructions/memory.instructions.md"
-  # Copilot ignores hook context, so it gets the /html-plan Goal Verification rule as an instruction.
-  "claude/hooks/html_plan_rule.md|$HOME/.copilot/instructions/html-plan.instructions.md"
   "claude/settings.json|$HOME/.claude/settings.json"
   "claude/keybindings.json|$HOME/.claude/keybindings.json"
   "claude/init-submodules.sh|$HOME/.claude/init-submodules.sh"
   "claude/hooks|$HOME/.claude/hooks"
   "claude/skills|$HOME/.claude/skills"
-  "claude/skills|$HOME/.copilot/skills"
-  "copilot/settings.json|$HOME/.copilot/settings.json"
   # pi reads one context file from its agent dir; pi/extensions/claude-context.ts expands
   # its @ imports and loads the project memory, as Claude Code does.
   "claude/CLAUDE.md|$HOME/.pi/agent/AGENTS.md"
-  "copilot/memory.md|$HOME/.pi/agent/memory.md"
+  "pi/memory.md|$HOME/.pi/agent/memory.md"
   "claude/skills|$HOME/.pi/agent/skills"
   "pi/settings.json|$HOME/.pi/agent/settings.json"
   "pi/APPEND_SYSTEM.md|$HOME/.pi/agent/APPEND_SYSTEM.md"
@@ -135,8 +127,6 @@ LINKS_ALL=(
 LINKS_MAC=(
   "home/bin/poke_ghostty.sh|$HOME/bin/poke_ghostty.sh"
   "home/bin/ghostty_panes.py|$HOME/bin/ghostty_panes.py"
-  "home/bin/make_friendly.sh|$HOME/bin/make_friendly.sh"
-  "config/services/Make friendly!.workflow|$HOME/Library/Services/Make friendly!.workflow"
   "config/ghostty/config|$HOME/Library/Application Support/com.mitchellh.ghostty/config"
   "vscode/settings.json|$HOME/Library/Application Support/Code/User/settings.json"
   "vscode/keybindings.json|$HOME/Library/Application Support/Code/User/keybindings.json"
@@ -147,10 +137,8 @@ LINKS_LAYER=(
   "personal/zshrc|$HOME/.config/zsh/local.zsh"
   "personal/zshenv|$HOME/.config/zsh/local.zshenv"
   "personal/profile.md|$HOME/.claude/profile.md"
-  "personal/profile.md|$HOME/.copilot/instructions/profile.instructions.md"
   "personal/ssh-config|$HOME/.ssh/config"
   "work/claude.md|$HOME/.claude/work.md"
-  "work/claude.md|$HOME/.copilot/instructions/work.instructions.md"
 )
 
 # A layer may also hold a Brewfile (Mac), skills/ and bin/. Set in main().
@@ -168,7 +156,7 @@ build_links() {
       [[ -f "$f" ]] && LINKS+=("$layer/bin/${f##*/}|$HOME/bin/${f##*/}")
     done
   done
-  # pi and Copilot also read ~/.agents/skills; Claude Code does not, so its built-in /simplify and
+  # pi also reads ~/.agents/skills; Claude Code does not, so its built-in /simplify and
   # /code-review stay. One link per skill: `hf skills add -g` writes into that folder too.
   for d in "$DOTFILES"/agents/skills/*/; do
     name="${d%/}"; name="${name##*/}"
@@ -177,7 +165,7 @@ build_links() {
 }
 
 # Layer skills join claude/skills/ as symlinks, so the one skills folder still
-# serves Claude, Copilot and pi. A block at the end of .git/info/exclude
+# serves Claude and pi. A block at the end of .git/info/exclude
 # (local to this clone) lists them, rebuilt each run so it never goes stale.
 link_layer_skills() {
   local layer d name dst exclude="$DOTFILES/.git/info/exclude" mark="# dotfiles: layer skills"
@@ -315,7 +303,7 @@ stage_link() {
 
   # A removed skill or layer file leaves a dangling link behind.
   for dir in "$DOTFILES/claude/skills" "$HOME/bin" \
-             "$HOME/.config/zsh" "$HOME/.claude" "$HOME/.copilot/instructions" "$HOME"; do
+             "$HOME/.config/zsh" "$HOME/.claude" "$HOME"; do
     prune_dangling "$dir"
   done
   link_layer_skills
@@ -501,7 +489,7 @@ stage_menu() {
     /System/Library/CoreServices/pbs -update
     changed "$msg"
   fi
-  # Show the remaining Services (Make friendly!, Ask Claude, ...) in the menu itself, not a submenu. Apps pick it up on relaunch.
+  # Show the remaining Services (Ask Claude, ...) in the menu itself, not a submenu. Apps pick it up on relaunch.
   set_default -g NSServicesMinimumItemCountForContextSubmenu int 99
 
   for id in "${DISABLED_SHARE_EXTENSIONS[@]}"; do
@@ -575,48 +563,6 @@ PY
   changed "Claude Desktop workiq MCP (restart Claude Desktop)"
 }
 
-# Copilot reads Claude Code plugins, so give it the ones Claude Code enables (minus its @builtin ones).
-copilot_plugins() {
-  have copilot || return 0
-  local known installed plugin repo direct
-  known=$(copilot plugin marketplace list 2>/dev/null)
-  installed=$(copilot plugin list 2>/dev/null)
-  # Each line: plugin@marketplace, the marketplace repo, and a direct repo source for when Copilot
-  # rejects that marketplace (it refuses anthropics/claude-plugins-official over one entry).
-  while read -r plugin repo direct; do
-    if [[ "$installed" == *"${plugin%@*}"* ]]; then same "copilot plugin $plugin"; continue; fi
-    if [[ "$known" != *"$repo"* ]] && copilot plugin marketplace add "$repo" >/dev/null 2>&1; then
-      known+=" $repo"; changed "copilot marketplace $repo"
-    fi
-    if copilot plugin install "$plugin" >/dev/null 2>&1 || { [[ -n "$direct" ]] && copilot plugin install "$direct" >/dev/null 2>&1; }; then
-      changed "copilot plugin $plugin"
-    else
-      warn "copilot plugin install $plugin failed"
-    fi
-  done < <(python3 - "$DOTFILES/claude/settings.json" "$HOME/.claude/plugins" <<'PY'
-import json, re, sys
-enabled = json.load(open(sys.argv[1])).get("enabledPlugins", {})
-known = json.load(open(f"{sys.argv[2]}/known_marketplaces.json"))
-for key, on in enabled.items():
-    if not on or key.endswith("@builtin"):
-        continue
-    name, mkt = key.rsplit("@", 1)
-    repo = known.get(mkt, {}).get("source", {}).get("repo", "-")
-    direct = ""
-    try:
-        entry = next(p for p in json.load(open(f"{sys.argv[2]}/marketplaces/{mkt}/.claude-plugin/marketplace.json"))["plugins"] if p["name"] == name)
-        src = entry["source"]
-        if isinstance(src, str):
-            direct = f"{repo}:{src.removeprefix('./')}"
-        elif m := re.match(r"https://github.com/([^/]+/[^/.]+)", src.get("url", "")):
-            direct = m.group(1)
-    except Exception:
-        pass
-    print(key, repo, direct)
-PY
-)
-}
-
 stage_agents() {
   stage "agents"
 
@@ -631,15 +577,10 @@ stage_agents() {
     hf skills add -g >/dev/null 2>&1 && changed "hf-cli skill" || fail "hf skills add failed"
   fi
   (( WITH_WORK && IS_MAC )) && desktop_workiq_mcp
-  copilot_plugins
 
   if (( IS_MAC )); then
-    # `copilot` comes from the copilot-cli cask in the Brewfile.
-    have copilot && same "copilot" || warn "copilot missing — run ./install.sh brew"
     have pi && same "pi" || warn "pi missing — run ./install.sh brew"
   else
-    # Linux: GitHub's installer for copilot.
-    ensure_bin copilot "copilot install" bash -c 'curl -fsSL https://gh.io/copilot-install | bash'
     # pi's own installer, not brew: the formula pulls in a brew node (see Brewfile.linux).
     ensure_bin pi "pi install" bash -c 'curl -fsSL https://pi.dev/install.sh | sh'
   fi

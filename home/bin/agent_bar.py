@@ -2,7 +2,7 @@
 # The line the agent-bar mod pins under every Claude Code and pi prompt:
 #   $142 this month · waiting: api-2 · done: web-1, docs
 # Spend is this calendar month's cost on this machine across every coding CLI ccusage reads
-# (Claude Code, Copilot, pi...). "waiting" and "done" are tmux sessions you are not
+# (Claude Code, pi...). "waiting" and "done" are tmux sessions you are not
 # attached to: blocked on a question, or finished since you last had them open.
 import glob
 import json
@@ -16,9 +16,7 @@ LINE, SPEND, SESSIONS = (os.path.join(DIR, f) for f in ("line", "spend.json", "s
 ME = os.path.abspath(__file__)
 SPEND_TTL = 600
 # Where each CLI writes as it works; spend is refreshed only after one of these changes.
-# Copilot's WAL stands in for its ~90k session folders, which take seconds to glob.
-LOGS = ["~/.claude/projects/*/*.jsonl", "~/.copilot/session-store.db-wal",
-        "~/.pi/agent/sessions/*/*.jsonl"]
+LOGS = ["~/.claude/projects/*/*.jsonl", "~/.pi/agent/sessions/*/*.jsonl"]
 SHOWN = 3
 
 

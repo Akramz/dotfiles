@@ -10,8 +10,8 @@ You are improving the quality of the changed code, not hunting for bugs. Review 
 simplification, efficiency and altitude issues, then fix what you find. Do not look for
 correctness bugs: that is what `/code-review` is for.
 
-**Hard rule:** you **must** run the four angles as four subagents. pi has the `subagent` tool and
-Copilot has the `task` tool, so in those CLIs the fan-out is never optional, however small the diff.
+**Hard rule:** you **must** run the four angles as four subagents. pi has the `subagent` tool, so
+in pi the fan-out is never optional, however small the diff.
 Only if no subagent tool exists at all, do all four angles yourself, one after the other.
 
 ## Phase 0: Gather the diff
@@ -25,7 +25,6 @@ untracked files from `git status --short`. If there is no change, say so and sto
 Launch **4 independent review subagents in one message** so they run at the same time:
 
 - **pi:** the `subagent` tool in parallel mode, `tasks: [{ agent: "reviewer", task }, ...]`.
-- **Copilot:** the `task` tool, 4 calls in one message.
 
 Give each agent the diff (or the exact command to get it), the repo path, and **one** of the four
 angles below. Each returns its findings as `file:line`, a one-line summary, and the concrete cost:

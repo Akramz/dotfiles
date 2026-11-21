@@ -599,7 +599,7 @@ class UI:
         # lower-cased, e.g. blog-1, blog-2
         base = sanitize(proj.leaf).lower()
         default = next_session_name(base, self.existing_names(proj.host))
-        name = self.text_modal(f"New Copilot CLI session in {proj.where}", default)
+        name = self.text_modal(f"New pi session in {proj.where}", default)
         if name is None:
             return
         name = name.strip()

@@ -7,8 +7,7 @@ argument-hint: "[low|medium|high|max] [target] [--fix]"
 # /code-review → finder angles in parallel → verify each candidate → ranked findings
 
 **Hard rule:** at medium, high and max you **must** run the finders and verifiers as subagents. pi
-has the `subagent` tool and Copilot has the `task` tool, so in those CLIs the fan-out is never
-optional, however small the diff. A single pass, where you do each angle and verification yourself,
+has the `subagent` tool, so in pi the fan-out is never optional, however small the diff. A single pass, where you do each angle and verification yourself,
 is allowed only at `low` or when no subagent tool exists at all.
 
 Parse the arguments: an effort level (`low`, `medium`, `high`, `max`; default **medium**), an
@@ -30,7 +29,6 @@ Run finders and verifiers as **independent subagents, all of a phase in one mess
 
 - **pi:** the `subagent` tool in parallel mode, `tasks: [{ agent: "reviewer", task }, ...]`
   (at most 8 tasks per call; make several calls in the same message for more).
-- **Copilot:** the `task` tool, one call per agent, all in one message.
 
 Give each subagent the diff (or the exact command to get it), the repo path, and its one angle or
 candidate. Subagents only read; they never edit.

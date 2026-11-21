@@ -75,7 +75,6 @@ cask "visual-studio-code"
 
 # ── AI ──────────────────────────────────────────────────────────
 cask "claude"
-cask "copilot-cli"        # the `copilot` CLI used by tp / pc
 brew "pi-coding-agent"    # the `pi` CLI used by tp / pie / adm
 
 # ── knowledge ───────────────────────────────────────────────────

@@ -12,7 +12,7 @@ folder to `personal/`, which is gitignored. Edit the copies, then run
 | `zshenv` | linked to `~/.config/zsh/local.zshenv` | environment for every shell. `export DOTFILES_YES=1` makes `install.sh` stop asking |
 | `Brewfile` | read by the `brew` stage | your own apps (Mac only) |
 | `bin/<script>` | linked to `~/bin/<script>` | your own scripts |
-| `skills/<name>/` | symlinked into `claude/skills/<name>` | private skills; Claude, Copilot and pi all see them. `.git/info/exclude` keeps them out of the repo's `git status` |
+| `skills/<name>/` | symlinked into `claude/skills/<name>` | private skills; Claude and pi both see them. `.git/info/exclude` keeps them out of the repo's `git status` |
 | `secrets.env` | macOS text replacements | `key=value` lines; typing `>key` anywhere expands to the value. Shape: `secrets.example.env` |
 | `ssh-config` | linked to `~/.ssh/config` | your ssh hosts; keep it mode 600. Shape: `ssh-config.example` |
 
