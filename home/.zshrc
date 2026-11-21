@@ -127,13 +127,12 @@ _tp_launch_complete() {
   else _alternative 'folders:folder:_path_files -/' 'hosts:host:_ssh_hosts -S:'
   fi
 }
-# cld / pc / pie / oa <name> [dir | host:dir] [--flag…]   new Claude / Copilot / pi / Codex session in dir
+# cld / pc / pie <name> [dir | host:dir] [--flag…]   new Claude / Copilot / pi session in dir
 # (default: here), or on an ssh host (host: alone is its ~); dash args go to the CLI
 cld() { _tp_launch 'claude --permission-mode auto' '' "$@" }
 pc() { _tp_launch "$COPILOT_CMD" copilot "$@" }
 pie() { _tp_launch pi pi "$@" }
-oa() { _tp_launch codex '' "$@" }
-compdef _tp_launch_complete cld pc pie oa
+compdef _tp_launch_complete cld pc pie
 # adm [name] — the pi session in ~ for mail, calendar and other admin; attaches if it exists.
 # pi reads Claude's memory (pi/extensions/claude-context.ts), so admin work need not spend Claude budget.
 adm() {
@@ -163,8 +162,6 @@ function vcp {
 # Remote globs (vcp vm:runs/*.tif) reach the VM as typed; local ones expand in vcp.
 alias vcp='noglob vcp'
 compdef vcp=scp
-
-alias fixmouse="printf '\e[?1000l\e[?1002l\e[?1003l\e[?1006l'"
 
 # bun completions
 [ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"

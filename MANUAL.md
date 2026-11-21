@@ -14,7 +14,7 @@ in `personal/MANUAL.md`.
 - [ ] `az login`
 - [ ] `gcloud auth login`
 - [ ] `aws configure`, or skip it and use `--no-sign-request` for public buckets.
-- [ ] Sign in to Claude Code (`claude`), Codex (`codex`) and Copilot (`copilot`).
+- [ ] Sign in to Claude Code (`claude`) and Copilot (`copilot`).
 - [ ] Sign in to pi once on each machine: run `pi`, then `/login github-copilot`, as the GitHub account whose Copilot seat pi should use (on this Mac: the work account). pi keeps the login in `~/.pi/agent/auth.json` and renews it itself. It cannot use the Copilot CLI token from §6: that one gets a 401.
 
 ## 3. System Settings
@@ -79,10 +79,10 @@ macOS will not grant these from a script. Grant them on first launch, or in
 ## 7. Work machine (`--with-work`)
 
 `./install.sh --with-work` (or `./install.sh brew --with-work`) adds
-`work/Brewfile`: Edge, Teams, Office, Azure Storage Explorer and `azure-cli`.
+`work/Brewfile`: Azure Storage Explorer and `azure-cli`.
 The rest comes from your company once you enrol:
 
-- [ ] **Company Portal**: enrol. It pushes the managed apps.
+- [ ] **Company Portal**: enrol. It pushes the managed apps (Edge, Teams, Office).
 - [ ] **Azure VPN Client** (App Store).
 - [ ] If PyPI is blocked, set your company's approved package proxy as the default index in `~/.config/uv/uv.toml` (`[[index]]` with `default = true`). The agents read `~/.claude/work.md`, which points there.
 - [ ] `~/.npmrc` points npm at your company's internal registry. It is not in this repo; it comes back with the corporate tooling.
@@ -109,6 +109,5 @@ After `linux/setup.sh` (which ends by running `./install.sh`):
 
 These are the lines in `install.sh` most likely to need a fix on a fresh machine:
 
-- Codex comes from the `codex` cask on the Mac, not `npm i -g @openai/codex`. The npm package downloads its native binary on first run, and Gatekeeper/XProtect has blocked that download as malware before.
 - `claude`, rustup and bun install through their vendors' curl-pipe-bash scripts. If a URL moves, the stage fails loudly.
 - Linux: the agent installers are in `stage_agents`; slow-but-fine Homebrew bootstrap notes are in `Brewfile.linux`'s header.

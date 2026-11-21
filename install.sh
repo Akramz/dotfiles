@@ -168,13 +168,6 @@ build_links() {
       [[ -f "$f" ]] && LINKS+=("$layer/bin/${f##*/}|$HOME/bin/${f##*/}")
     done
   done
-  # Codex owns ~/.codex/skills/.system, so link skills one by one, not the whole
-  # directory. Codex invokes them as `$name`, not `/name`.
-  for d in "$DOTFILES"/claude/skills/*/; do
-    [[ -f "$d/SKILL.md" ]] || continue   # skips synced/ and stray dirs
-    name="${d%/}"; name="${name##*/}"
-    LINKS+=("claude/skills/$name|$HOME/.codex/skills/$name")
-  done
   # pi and Copilot also read ~/.agents/skills; Claude Code does not, so its built-in /simplify and
   # /code-review stay. One link per skill: `hf skills add -g` writes into that folder too.
   for d in "$DOTFILES"/agents/skills/*/; do
@@ -184,7 +177,7 @@ build_links() {
 }
 
 # Layer skills join claude/skills/ as symlinks, so the one skills folder still
-# serves Claude, Copilot and Codex. A block at the end of .git/info/exclude
+# serves Claude, Copilot and pi. A block at the end of .git/info/exclude
 # (local to this clone) lists them, rebuilt each run so it never goes stale.
 link_layer_skills() {
   local layer d name dst exclude="$DOTFILES/.git/info/exclude" mark="# dotfiles: layer skills"
@@ -320,9 +313,8 @@ stage_link() {
   stage "link"
   local entry src dst abs_src dir
 
-  # A removed skill or layer file leaves a dangling link behind. Skills first:
-  # their Codex links only dangle once the skill link is gone.
-  for dir in "$DOTFILES/claude/skills" "$HOME/.codex/skills" "$HOME/bin" \
+  # A removed skill or layer file leaves a dangling link behind.
+  for dir in "$DOTFILES/claude/skills" "$HOME/bin" \
              "$HOME/.config/zsh" "$HOME/.claude" "$HOME/.copilot/instructions" "$HOME"; do
     prune_dangling "$dir"
   done
@@ -630,8 +622,6 @@ stage_agents() {
 
   ensure_bin claude   "claude install" bash -c 'curl -fsSL https://claude.ai/install.sh | bash'
 
-  # On the Mac codex comes from its cask instead, see below.
-  (( IS_MAC )) || ensure_bin codex "npm i -g @openai/codex" npm i -g @openai/codex
   (( WITH_WORK )) && ensure_bin workiq "npm i -g @microsoft/workiq" npm i -g @microsoft/workiq
   ensure_bin wispr "uv tool install wispr-cli" uv tool install git+https://github.com/Akramz/wispr-cli
   ensure_bin hf "uv tool install huggingface_hub" uv tool install huggingface_hub
@@ -646,13 +636,8 @@ stage_agents() {
     # `copilot` comes from the copilot-cli cask in the Brewfile.
     have copilot && same "copilot" || warn "copilot missing — run ./install.sh brew"
     have pi && same "pi" || warn "pi missing — run ./install.sh brew"
-
-    # codex comes from the codex cask in the Brewfile (see stage_brew) — npm's
-    # @openai/codex fetches its native binary on first run, which
-    # Gatekeeper/XProtect has blocked as malware.
-    have codex && same "codex" || warn "codex missing — run ./install.sh brew"
   else
-    # Linux: GitHub's installer for copilot; codex came from npm above (no Gatekeeper).
+    # Linux: GitHub's installer for copilot.
     ensure_bin copilot "copilot install" bash -c 'curl -fsSL https://gh.io/copilot-install | bash'
     # pi's own installer, not brew: the formula pulls in a brew node (see Brewfile.linux).
     ensure_bin pi "pi install" bash -c 'curl -fsSL https://pi.dev/install.sh | sh'

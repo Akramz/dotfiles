@@ -4,12 +4,9 @@
 #   brew bundle check   --file=work/Brewfile
 #
 # Loaded by install.sh's `brew` stage only when run with --with-work. The
-# managed apps arrive through Company Portal once you enrol; they are not
-# brew-installable — see MANUAL.md §7.
+# managed apps (Edge, Teams, Office) arrive through Company Portal once you
+# enrol, so brew leaves them alone — see MANUAL.md §7.
 
 brew "azure-cli"
 
-cask "microsoft-edge"     # work SSO
-cask "microsoft-teams"
-cask "microsoft-office"
 cask "microsoft-azure-storage-explorer"

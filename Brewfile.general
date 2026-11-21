@@ -75,10 +75,6 @@ cask "visual-studio-code"
 
 # ── AI ──────────────────────────────────────────────────────────
 cask "claude"
-cask "chatgpt"
-cask "codex"              # npm's @openai/codex fetches its native binary on
-                           # first run, which Gatekeeper/XProtect has blocked
-                           # as malware; the cask ships a signed release instead
 cask "copilot-cli"        # the `copilot` CLI used by tp / pc
 brew "pi-coding-agent"    # the `pi` CLI used by tp / pie / adm
 
@@ -92,7 +88,6 @@ cask "zoom"
 
 # ── launcher + input ────────────────────────────────────────────
 cask "raycast"            # bind to cmd+space, see MANUAL.md
-cask "superwhisper"       # dictation
 cask "wispr-flow"         # dictation
 
 # ── geo ─────────────────────────────────────────────────────────

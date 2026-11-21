@@ -5,7 +5,7 @@ between machines. It manages my OS and app settings and installs the software
 I use for personal projects and work.
 
 A big part of the setup is working with coding agents: instructions, shared
-skills, and settings for Claude Code, Copilot CLI, pi, and Codex, plus tmux session
+skills, and settings for Claude Code, Copilot CLI, and pi, plus tmux session
 management across these CLIs.
 
 Try the whole setup, take just the parts you need, or fork it and make it your own.
@@ -30,8 +30,8 @@ Try the whole setup, take just the parts you need, or fork it and make it your o
 - **Agents survive a reboot.** Restart the Mac and every Claude, Copilot and pi
   pane comes back in the same conversation, not a blank one.
   ([`agents.sh`](config/tmux-resurrect/agents.sh))
-- **One skills folder for every agent.** Write a skill once; Claude, Copilot,
-  pi and Codex all get it. ([`claude/skills`](claude/skills)) Copilot also reads
+- **One skills folder for every agent.** Write a skill once; Claude, Copilot
+  and pi all get it. ([`claude/skills`](claude/skills)) Copilot also reads
   the same rules as Claude, through links in `~/.copilot/instructions/`.
 - **Less typing in the shell.** `cd` and `z` list the new folder; `up` updates
   brew, Claude Code and Copilot CLI; `vopen vm:path` pulls a file from a VM and
@@ -151,7 +151,7 @@ before using this setup.
 |---|---|
 | `cld` in [`home/.zshrc`](home/.zshrc) | `claude --permission-mode auto`: a classifier approves routine actions; risky ones still ask. `cld test [dir]` starts it in dir (default: here); `cld test vm:dir` runs it in tmux on an ssh host (`vm:` alone is its `~`), survives disconnects, and reattaches when rerun. Dash args pass through: `cld test --chrome` gives the session browser tools |
 | `pie`, `adm`, and ctrl-a in `tp` | `pi` on Opus 5.5 through GitHub Copilot. pi has no permission prompts: every tool call runs. It trusts every folder (`defaultProjectTrust` in [`pi/settings.json`](pi/settings.json)), so a repo's `.pi/` extensions load without asking |
-| `pc` | `copilot` on Opus 5.5, interactive mode (`COPILOT_CMD` in `.zshrc`). `pc` and `oa` (Codex) take the same arguments as `cld` |
+| `pc` | `copilot` on Opus 5.5, interactive mode (`COPILOT_CMD` in `.zshrc`). `pc` takes the same arguments as `cld` |
 | [`claude/settings.json`](claude/settings.json) | auto mode, `git push` allowed |
 | [`copilot/settings.json`](copilot/settings.json) | `allow-all` permissions, high effort, GitHub MCP server off |
 | [`vscode/settings.json`](vscode/settings.json) | agent tools auto-approved; every commit pushes; untrusted files open without asking |
@@ -165,7 +165,7 @@ before using this setup.
 | [`install.sh`](install.sh) | one script: install, `doctor`, `pull` |
 | [`home/`](home) | zsh, tmux, and Git configs, plus small scripts for `~/bin` |
 | [`config/`](config) | `tp`, the resurrect strategy, Ghostty |
-| [`claude/`](claude) | agent instructions, settings, and skills (shared with Copilot, pi and Codex) |
+| [`claude/`](claude) | agent instructions, settings, and skills (shared with Copilot and pi) |
 | [`pi/`](pi) | pi settings and the extensions that make it work like Claude Code |
 | [`copilot/`](copilot), [`vscode/`](vscode) | their settings |
 | `Brewfile.general`, `Brewfile.linux` | apps and tools for macOS, with a smaller set for Linux |
