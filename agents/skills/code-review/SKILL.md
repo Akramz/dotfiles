@@ -99,6 +99,7 @@ infrastructure. Name the deeper, more general change.
 ### Conventions
 Find the instruction files that govern the changed code: the repo-root `CLAUDE.md` and `AGENTS.md`,
 plus any `CLAUDE.md`, `CLAUDE.local.md` or `AGENTS.md` in an ancestor directory of a changed file.
+Also read the repo-root `REVIEW.md`: it lists what this repo's owner wants flagged.
 Your user-level rules are already in your context; do not search for them. Flag a violation only when
 you can quote the exact rule and the exact line that breaks it. If no file applies, return nothing.
 

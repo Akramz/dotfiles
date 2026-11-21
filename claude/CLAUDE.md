@@ -22,13 +22,17 @@
 - While working, update me only when you find something important or change direction.
 - When you finish, lead with the outcome: the first sentence answers "what happened" or "what did you find". Detail after that.
 - Do not stop early and claim completion. Do not silently relax constraints.
+- Before you call a code change done, run the repo's `verify` skill if it has one.
+- If a check still fails after three fix attempts, stop. Tell me what fails, what you tried, and your best guess at the cause.
 - Investigate every test failure, including timeouts.
 - When it fits, show a screenshot or video that proves your work is correct, so I can check it quickly.
 - If you think I'm wrong, say so and argue it.
 
 ## Tests
 
-- Only write tests for things that really matter. Skip trivial or redundant ones.
+- Each test should check real usage on real inputs. Do not write trivial, redundant, or mock-only tests, and delete them when you find them.
+- Write end-to-end tests on small real inputs. Add differential tests (old and new code on the same inputs) for rewrites, and property tests (Hypothesis) where a clear invariant exists. Do not write unit tests.
+- Never fix a flaky test with sleeps, retries, or skips. Find the cause, or delete the test and say why.
 - The full test suite must run in under 30 seconds. If it's slower, cut or speed up tests until it is.
 
 ## Git
