@@ -85,7 +85,15 @@ function loadAgentsFromDir(dir: string, source: "user" | "project"): AgentConfig
 			continue;
 		}
 
-		const { frontmatter, body } = parseFrontmatter<AgentFrontmatter>(content);
+		let parsed: { frontmatter: AgentFrontmatter; body: string };
+		try {
+			parsed = parseFrontmatter<AgentFrontmatter>(content);
+		} catch (e) {
+			// Local change: one agent file with bad YAML skips itself instead of breaking the extension.
+			console.warn(`subagent: skipped ${filePath}: ${(e as Error).message}`);
+			continue;
+		}
+		const { frontmatter, body } = parsed;
 
 		if (typeof frontmatter.name !== "string" || typeof frontmatter.description !== "string") {
 			continue;

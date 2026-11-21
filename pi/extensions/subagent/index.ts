@@ -1,5 +1,7 @@
-// Vendored from pi 1.5.2 examples/extensions/subagent (pi's official subagent extension), with one
-// local change: project-local agents always need confirmation (confirmProjectAgents removed).
+// Vendored from pi 1.5.2 examples/extensions/subagent (pi's official subagent extension), with local
+// changes: project-local agents always need confirmation (confirmProjectAgents removed), a bad agent
+// file skips itself (agents.ts), and the tool tells the main model which agents exist and when to
+// delegate (promptSnippet, promptGuidelines).
 /**
  * Subagent Tool - Delegate tasks to specialized agents
  *
@@ -35,7 +37,7 @@ import {
 } from "@earendil-works/pi-coding-agent";
 import { Container, Markdown, Spacer, Text } from "@earendil-works/pi-tui";
 import { Type } from "typebox";
-import { type AgentConfig, type AgentScope, discoverAgents } from "./agents.ts";
+import { type AgentConfig, type AgentScope, discoverAgents, formatAgentList } from "./agents.ts";
 
 const MAX_PARALLEL_TASKS = 8;
 const MAX_CONCURRENCY = 4;
@@ -612,9 +614,17 @@ export default function (pi: ExtensionAPI) {
 		if (details?.isError) return { isError: true };
 	});
 
+	// Local change: tell the main model which agents exist and when to delegate, like Claude Code's Agent tool.
+	const agentList = formatAgentList(discoverAgents(process.cwd(), "user").agents, 20).text;
 	pi.registerTool({
 		name: "subagent",
 		label: "Subagent",
+		promptSnippet: `Delegate tasks to subagents, each in its own context. Agents: ${agentList}`,
+		promptGuidelines: [
+			"Use the subagent tool when the user asks for subagents, or when a task benefits from its own context: a wide search where you only need the conclusion, independent work that can run in parallel, or output that would flood your context. Do small lookups and edits yourself.",
+			"A subagent knows only its task: give the goal, the relevant paths, what is already known, and what to return.",
+			`Run independent subagents in one parallel call (at most ${MAX_PARALLEL_TASKS} tasks), never two workers on the same files. Relay what matters to the user and check a worker's changes before reporting them as done.`,
+		],
 		description: [
 			"Delegate tasks to specialized subagents with isolated context.",
 			"Modes: single (agent + task), parallel (tasks array), chain (sequential with {previous} placeholder).",
