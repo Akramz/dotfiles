@@ -167,9 +167,6 @@ if [[ $OSTYPE == darwin* ]]; then
   export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
   # Revive Ghostty's global ctrl+space hotkey after macOS kills its event tap
   alias poke-ghostty='bash "$HOME/bin/poke_ghostty.sh"'
-  # vopen host:path — pull one file from a VM into ~/Downloads and open it
-  vopen() { vcp "$1" ~/Downloads && open "$HOME/Downloads/${1:t}" }
-  compdef vopen=scp
   # Opt+Shift+<n> in a split with no tmux: Ghostty sends ESC[901<n>~. Detached
   # and nohup'd, since resizing may close this very split.
   _ghostty_panes() { nohup "$HOME/bin/ghostty_panes.py" "${KEYS[6]}" >/dev/null 2>&1 &! }

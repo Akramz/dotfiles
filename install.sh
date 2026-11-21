@@ -572,6 +572,7 @@ stage_agents() {
   ensure_bin wispr "uv tool install wispr-cli" uv tool install git+https://github.com/Akramz/wispr-cli
   ensure_bin hf "uv tool install huggingface_hub" uv tool install huggingface_hub
   ensure_bin ruff "uv tool install ruff" uv tool install ruff
+  ensure_bin pytest "uv tool install pytest" uv tool install pytest
   # Agent skill generated from the installed CLI; lands as a gitignored link in claude/skills.
   if have hf && [[ ! -e "$HOME/.agents/skills/hf-cli" ]]; then
     hf skills add -g >/dev/null 2>&1 && changed "hf-cli skill" || fail "hf skills add failed"

@@ -33,8 +33,7 @@ Try the whole setup, take just the parts you need, or fork it and make it your o
 - **One skills folder for every agent.** Write a skill once; Claude and pi
   both get it. ([`claude/skills`](claude/skills))
 - **Less typing in the shell.** `cd` and `z` list the new folder; `up` updates
-  brew and Claude Code; `vopen vm:path` pulls a file from a VM and
-  opens it. A new shell starts in about 0.3 s.
+  brew and Claude Code. A new shell starts in about 0.3 s.
   ([`home/.zshrc`](home/.zshrc))
 - **Conversations name themselves.** Claude Code already titles each
   conversation after the first prompt but only shows it in `/resume`; a hook puts

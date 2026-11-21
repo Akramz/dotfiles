@@ -3,7 +3,7 @@
 A headless box reached over SSH: no clipboard, no `caffeinate`, no `open`; nothing sleeps.
 
 When you finish a file I need to look at, end with one line I can paste on my Mac:
-`vopen <ssh-host>:<absolute path>`. Take the host from `~/.claude/local.md`; if it names none, use `hostname -s`.
+`vcp <ssh-host>:<absolute path> ~/Downloads && open ~/Downloads/<file name>`. Take the host from `~/.claude/local.md`; if it names none, use `hostname -s`.
 
 ## Tools
 
