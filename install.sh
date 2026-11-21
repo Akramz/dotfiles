@@ -8,8 +8,8 @@
 #   ./install.sh doctor              verify only, changes nothing
 #   ./install.sh pull                copy drifted files back into the repo
 #
-# Stages: brew shell link macos menu agents vscode python secrets rust
-#         (Linux: brew shell link agents python rust)
+# Stages: brew shell link macos menu agents vscode secrets rust
+#         (Linux: brew shell link agents rust)
 #
 # Two layers sit on top of the repo: personal/ (yours, gitignored; the first
 # run copies personal.example/ there) and work/ (after one `--with-work` run,
@@ -40,10 +40,10 @@ WITH_WORK=0
 # `uname` is a function call, so the Mac branch can be dry-run from Linux:
 #   bash -c 'uname(){ echo Darwin; }; export -f uname; ./install.sh doctor'
 case "$(uname -s)" in
-  Darwin) IS_MAC=1; OS=darwin; BREW_PREFIX=/opt/homebrew; BREWFILE=Brewfile.general; MINIFORGE_OS=MacOSX
-          ALL_STAGES=(brew shell link macos menu agents vscode python secrets rust) ;;
-  Linux)  IS_MAC=0; OS=linux;  BREW_PREFIX=/home/linuxbrew/.linuxbrew; BREWFILE=Brewfile.linux; MINIFORGE_OS=Linux
-          ALL_STAGES=(brew shell link agents python rust)
+  Darwin) IS_MAC=1; OS=darwin; BREW_PREFIX=/opt/homebrew; BREWFILE=Brewfile.general
+          ALL_STAGES=(brew shell link macos menu agents vscode secrets rust) ;;
+  Linux)  IS_MAC=0; OS=linux;  BREW_PREFIX=/home/linuxbrew/.linuxbrew; BREWFILE=Brewfile.linux
+          ALL_STAGES=(brew shell link agents rust)
           # Same as home/.zshenv: npm globals under $HOME, so npm_global works from bash too.
           export NPM_CONFIG_PREFIX="$HOME/.npm-global" PATH="$HOME/.npm-global/bin:$PATH" ;;
   *) printf 'unsupported OS: %s\n' "$(uname -s)"; exit 1 ;;
@@ -625,6 +625,7 @@ stage_agents() {
   (( WITH_WORK )) && ensure_bin workiq "npm i -g @microsoft/workiq" npm i -g @microsoft/workiq
   ensure_bin wispr "uv tool install wispr-cli" uv tool install git+https://github.com/Akramz/wispr-cli
   ensure_bin hf "uv tool install huggingface_hub" uv tool install huggingface_hub
+  ensure_bin ruff "uv tool install ruff" uv tool install ruff
   # Agent skill generated from the installed CLI; lands as a gitignored link in claude/skills.
   if have hf && [[ ! -e "$HOME/.agents/skills/hf-cli" ]]; then
     hf skills add -g >/dev/null 2>&1 && changed "hf-cli skill" || fail "hf skills add failed"
@@ -665,39 +666,6 @@ stage_vscode() {
       code --install-extension "$ext" >/dev/null 2>&1 || fail "could not install $ext"
     fi
   done < "$DOTFILES/vscode/extensions.txt"
-}
-
-# ════════════════════════════════════════════════════════════════
-# stage: python
-# ════════════════════════════════════════════════════════════════
-stage_python() {
-  stage "python"
-
-  # ~/miniforge3, not the Homebrew cask: home/.zshrc's conda block points at
-  # $HOME/miniforge3, and the cask installs somewhere else entirely.
-  if [[ -d "$HOME/miniforge3" ]]; then
-    same "miniforge3"
-  else
-    changed "installing Miniforge3 to ~/miniforge3"
-    local url
-    url="https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$MINIFORGE_OS-$(uname -m).sh"
-    curl -fsSL "$url" -o /tmp/miniforge.sh \
-      && bash /tmp/miniforge.sh -b -p "$HOME/miniforge3" \
-      || { fail "miniforge install failed"; return 1; }
-    rm -f /tmp/miniforge.sh
-    # No `conda init` — home/.zshrc already carries the init block, and
-    # conda init would rewrite it with absolute paths through the symlink.
-  fi
-
-  # The Mac's base env is this curated list, so keep it in sync. A Linux box
-  # usually has its own base env this list would fight; leave it alone there.
-  if (( IS_MAC )); then
-    changed "updating base env from environments/base.yml"
-    "$HOME/miniforge3/bin/mamba" env update -n base -f "$DOTFILES/environments/base.yml" \
-      || fail "base env update failed"
-  else
-    skip "base env update (Mac state)"
-  fi
 }
 
 # ════════════════════════════════════════════════════════════════

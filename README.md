@@ -35,7 +35,7 @@ Try the whole setup, take just the parts you need, or fork it and make it your o
   the same rules as Claude, through links in `~/.copilot/instructions/`.
 - **Less typing in the shell.** `cd` and `z` list the new folder; `up` updates
   brew, Claude Code and Copilot CLI; `vopen vm:path` pulls a file from a VM and
-  opens it. A new shell starts in about 0.3 s: conda loads on first use.
+  opens it. A new shell starts in about 0.3 s.
   ([`home/.zshrc`](home/.zshrc))
 - **Conversations name themselves.** Claude Code already titles each
   conversation after the first prompt but only shows it in `/resume`; a hook puts
@@ -169,7 +169,6 @@ before using this setup.
 | [`pi/`](pi) | pi settings and the extensions that make it work like Claude Code |
 | [`copilot/`](copilot), [`vscode/`](vscode) | their settings |
 | `Brewfile.general`, `Brewfile.linux` | apps and tools for macOS, with a smaller set for Linux |
-| [`environments/base.yml`](environments/base.yml) | the base Python environment (macOS) |
 | [`personal.example/`](personal.example) | the template for your gitignored `personal/` |
 | [`work/`](work) | installed only with `--with-work` |
 

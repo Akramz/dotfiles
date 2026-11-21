@@ -8,39 +8,16 @@ typeset +x FPATH; typeset -U path fpath
 # ~/bin first: ~/bin/gh wraps brew's gh to pick the GitHub account per repo.
 path=("$HOME/bin" $path)
 
-# oh-my-zsh. Themes: https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
+# oh-my-zsh, no theme: PROMPT below is the whole prompt.
 export ZSH="$HOME/.oh-my-zsh"
-ZSH_THEME="robbyrussell"
+ZSH_THEME=""
 plugins=(git zsh-autosuggestions autojump tmux)
 
 source $ZSH/oh-my-zsh.sh
 
-export CONDA_CHANGEPS1=false
-
-# Conda, lazily: its shell hook (~0.4 s, and it activates base) runs the first time
-# you type conda or mamba, not in every new shell. Don't let `conda init` rewrite this.
-export MAMBA_ROOT_PREFIX="$HOME/miniforge3"
-path+=("$HOME/miniforge3/condabin")
-_conda_lazy() {
-  unfunction conda mamba 2>/dev/null
-  eval "$("$HOME/miniforge3/bin/conda" shell.zsh hook)"
-  [[ -f $MAMBA_ROOT_PREFIX/etc/profile.d/mamba.sh ]] && . "$MAMBA_ROOT_PREFIX/etc/profile.d/mamba.sh"
-  "$@"
-}
-conda() { _conda_lazy conda "$@" }
-mamba() { _conda_lazy mamba "$@" }
-
-# Customizing ZSH prompt to include the active Conda environment
-PROMPT='$(conda_prompt_info)%~ %# '
+PROMPT='%~ %# '
 # Over ssh, show the host so a remote shell is never mistaken for the local one.
-[[ -n $SSH_CONNECTION ]] && PROMPT='$(conda_prompt_info)%m:%~ %# '
-
-# Function to display Conda environment
-conda_prompt_info() {
-    if [ -n "$CONDA_DEFAULT_ENV" ]; then
-        echo "($CONDA_DEFAULT_ENV) "
-    fi
-}
+[[ -n $SSH_CONNECTION ]] && PROMPT='%m:%~ %# '
 
 command -v rbenv >/dev/null && eval "$(rbenv init -)"
 alias tnew='tmux new-session -s'

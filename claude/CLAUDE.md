@@ -43,7 +43,7 @@
 
 ## This machine
 
-- Python: Miniforge at `~/miniforge3`; per-project envs via `mamba env create` or `uv`.
+- Python: `uv` for per-project envs and scripts.
 
 Per-OS notes, work-machine notes (only after `install.sh --with-work`), then untracked notes
 about this particular machine (absent on most):
