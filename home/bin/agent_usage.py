@@ -59,9 +59,6 @@ def project(cwd):
     m = re.match(r'/private/tmp/claude-\d+/(-[^/]+)/', cwd)  # an agent's scratchpad: credit its project
     if m:
         return project(first_cwd(f'{HOME}/.claude/projects/{m.group(1)}'))
-    m = re.search(r'resident-\d{4}-\d{2}-\d{2}-([^/]+)', cwd)
-    if m:
-        return f'researcher: {m.group(1)}'
     m = re.match(re.escape(HOME) + r'/\.cache/([^/]+)/', cwd)
     if m:
         return m.group(1)

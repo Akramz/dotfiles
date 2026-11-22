@@ -72,7 +72,6 @@ A few useful skills:
 | Skill | What it does |
 |---|---|
 | [`explainy`](claude/skills/explainy/SKILL.md) | explains a repo, folder or diff to a total beginner: big pictures, few words |
-| [`researcher`](claude/skills/researcher/SKILL.md) | hands a scoped research project to an agent that runs it end to end and leaves a paper draft |
 | [`pi`](claude/skills/pi/SKILL.md) | lets Claude hand a job to pi in a `delegated-<name>` tmux session you can attach to |
 | [`hunk`](claude/skills/hunk/SKILL.md) | opens a live diff pane beside the agent |
 | [`gog`](claude/skills/gog/SKILL.md) | lets agents read your Gmail, Calendar and Drive |
