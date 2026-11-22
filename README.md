@@ -148,7 +148,7 @@ before using this setup.
 |---|---|
 | `cld` in [`home/.zshrc`](home/.zshrc) | `claude --permission-mode auto`: a classifier approves routine actions; risky ones still ask. `cld test [dir]` starts it in dir (default: here); `cld test vm:dir` runs it in tmux on an ssh host (`vm:` alone is its `~`), survives disconnects, and reattaches when rerun. Dash args pass through: `cld test --chrome` gives the session browser tools |
 | `pie`, `adm`, and ctrl-a in `tp` | `pi` on Opus 5.5 through GitHub Copilot. pi has no permission prompts: every tool call runs. It trusts every folder (`defaultProjectTrust` in [`pi/settings.json`](pi/settings.json)), so a repo's `.pi/` extensions load without asking |
-| [`claude/settings.json`](claude/settings.json) | auto mode, `git push` allowed |
+| [`claude/settings.json`](claude/settings.json) | auto mode, `git push` allowed, [Code Mode](https://code.claude.com/docs/en/code-mode) on (experimental; Claude asks once before it starts) |
 | [`vscode/settings.json`](vscode/settings.json) | agent tools auto-approved; every commit pushes; untrusted files open without asking |
 | [`claude/init-submodules.sh`](claude/init-submodules.sh) | checks out submodules in every repo Claude opens, untrusted clones included |
 | [MANUAL.md](MANUAL.md) | gives Ghostty and VS Code Full Disk Access |

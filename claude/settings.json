@@ -1,7 +1,8 @@
 {
   "cleanupPeriodDays": 36500,
   "env": {
-    "ENABLE_STOP_REVIEW": "0"
+    "ENABLE_STOP_REVIEW": "0",
+    "CLAUDE_CODE_EXPERIMENTAL_CODE_MODE": "1"
   },
   "permissions": {
     "allow": [
