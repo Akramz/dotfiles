@@ -569,6 +569,14 @@ stage_agents() {
   ensure_bin claude   "claude install" bash -c 'curl -fsSL https://claude.ai/install.sh | bash'
 
   (( WITH_WORK )) && ensure_bin workiq "npm i -g @microsoft/workiq" npm i -g @microsoft/workiq
+  # A uv tool whose Python was deleted (e.g. a removed conda) keeps a dead shim on PATH:
+  # uninstall it so ensure_bin below reinstalls ours; reinstall any others by hand.
+  local env
+  for env in "$HOME"/.local/share/uv/tools/*/; do
+    [[ -d "$env" && ! -e "$env/bin/python" ]] || continue
+    uv tool uninstall "$(basename "$env")" >/dev/null 2>&1
+    warn "removed uv tool $(basename "$env") (its Python is gone); reinstall it if it's not below"
+  done
   ensure_bin wispr "uv tool install wispr-cli" uv tool install git+https://github.com/Akramz/wispr-cli
   ensure_bin hf "uv tool install huggingface_hub" uv tool install huggingface_hub
   ensure_bin ruff "uv tool install ruff" uv tool install ruff
