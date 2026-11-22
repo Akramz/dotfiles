@@ -58,7 +58,10 @@ export default function (pi: ExtensionAPI) {
 			json(`${r}/.mcp.json`).mcpServers,
 		])),
 	};
+	// Claude-only MCP servers that pi should not load.
+	const skip = new Set(["dira"]);
 	for (const [name, cfg] of Object.entries(servers)) {
+		if (skip.has(name)) continue;
 		try {
 			pi.registerMcpServer(name, cfg as any);
 		} catch {}
