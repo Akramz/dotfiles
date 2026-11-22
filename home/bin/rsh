@@ -1,0 +1,3 @@
+#!/bin/bash
+host=$1; shift
+exec ssh "$host" "exec \"\$(command -v zsh || echo \"\$SHELL\")\" -ilc $(printf %q "$*")"

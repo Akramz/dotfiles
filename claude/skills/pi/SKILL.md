@@ -37,6 +37,28 @@ effort; add `--model` only when the user asks for another model.
 Tell the user the session name, that `tattach delegated-<name>` or `tp` opens it, and that
 the pane fills in when the job ends.
 
+### On an ssh host
+
+When the user names a host (`host:dir`), run the job there so the Mac can sleep. The host
+needs pi logged in (`/login github-copilot` there once) and DIR checked out. Changes stay on
+the host, so if the user wants them back, brief pi to commit to a branch and push.
+
+`~/bin/rsh <host> '<cmd>'` runs a command there; stdin passes through. Save the Launch
+block to `<scratchpad>/$N.sh` with `DIR=<dir on the host>` and `S=~/.agent-jobs`, then:
+
+```sh
+~/bin/rsh <host> "mkdir -p ~/.agent-jobs && cat > ~/.agent-jobs/$N.md" < <scratchpad>/$N.md
+~/bin/rsh <host> "bash -s" < <scratchpad>/$N.sh
+```
+
+Wait on the host in one background call; the outer loop only retries when ssh drops:
+
+```sh
+until ~/bin/rsh <host> "until [ -f ~/.agent-jobs/$N.log.done ]; do sleep 15; done; echo exit \$(cat ~/.agent-jobs/$N.log.done); tail -c 3000 ~/.agent-jobs/$N.log"; do sleep 60; done
+```
+
+Run Report's git commands through rsh. The user opens the session with `pie <N> <host>:<dir>`.
+
 ## Wait
 
 Wait with a **background** Bash call, so you get a notice when the job ends:

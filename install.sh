@@ -101,6 +101,7 @@ LINKS_ALL=(
   "home/bin/agent_usage.py|$HOME/bin/agent_usage.py"
   "home/bin/agent_bar.py|$HOME/bin/agent_bar.py"
   "home/bin/gh|$HOME/bin/gh"
+  "home/bin/rsh|$HOME/bin/rsh"
   "config/cd4a/config.json|$HOME/.config/cd4a/config.json"
   "config/tp/tp_tui.py|$HOME/.config/tp/tp_tui.py"
   "config/tmux-resurrect/agents.sh|$HOME/.tmux/plugins/tmux-resurrect/save_command_strategies/agents.sh"
