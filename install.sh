@@ -533,41 +533,52 @@ ensure_bin() {  # ensure_bin <bin> <label> <install command...>
   "$@" >/dev/null 2>&1 || fail "$label failed"
 }
 
+json_set() {
+  local cfg="$1" label="$2"; shift 2
+  python3 - "$cfg" "$@" <<'PY'
+import json, os, sys
+cfg, value, keys = sys.argv[1], json.loads(sys.argv[2]), sys.argv[3:]
+data = json.load(open(cfg)) if os.path.exists(cfg) else {}
+node = data
+for k in keys[:-1]:
+    node = node.setdefault(k, {})
+if node.get(keys[-1]) == value:
+    sys.exit(0)
+node[keys[-1]] = value
+json.dump(data, open(cfg + ".new", "w"), indent=2)
+if os.path.exists(cfg):
+    os.chmod(cfg + ".new", os.stat(cfg).st_mode & 0o777)
+sys.exit(3)
+PY
+  case $? in
+    0) same "$label"; return 1 ;;
+    3) [[ -e "$cfg" ]] && backup "$cfg"; mv "$cfg.new" "$cfg"; changed "$label" ;;
+    *) rm -f "$cfg.new"; fail "could not update $cfg"; return 1 ;;
+  esac
+}
+
 # Claude Desktop rewrites claude_desktop_config.json itself, so it can't be a
 # link: merge just mcpServers.workiq. Desktop doesn't read the shell PATH, and
 # workiq is a `#!/usr/bin/env node` script, so call node by its full path.
 desktop_workiq_mcp() {
-  local dir="$HOME/Library/Application Support/Claude" cfg tmp
-  cfg="$dir/claude_desktop_config.json"
+  local dir="$HOME/Library/Application Support/Claude"
   [[ -d "$dir" ]] || { skip "Claude Desktop not installed"; return 0; }
   have workiq && have node || { warn "workiq or node missing, skipping Desktop MCP"; return 0; }
-  tmp="$(mktemp)"
-  python3 - "$cfg" "$tmp" "$(command -v node)" "$(python3 -c 'import os,shutil; print(os.path.realpath(shutil.which("workiq")))')" <<'PY'
-import json, os, sys
-cfg, tmp, node, script = sys.argv[1:]
-data = json.load(open(cfg)) if os.path.exists(cfg) else {}
-want = {"command": node, "args": [script, "mcp"]}
-if data.get("mcpServers", {}).get("workiq") == want:
-    sys.exit(0)
-data.setdefault("mcpServers", {})["workiq"] = want
-json.dump(data, open(tmp, "w"), indent=2)
-sys.exit(3)
-PY
-  case $? in
-    0) same "Claude Desktop workiq MCP"; rm -f "$tmp"; return 0 ;;
-    3) ;;
-    *) fail "could not update $cfg"; rm -f "$tmp"; return 0 ;;
-  esac
-  chmod 644 "$tmp"
-  [[ -e "$cfg" ]] && backup "$cfg"
-  mv "$tmp" "$cfg"
-  changed "Claude Desktop workiq MCP (restart Claude Desktop)"
+  json_set "$dir/claude_desktop_config.json" "Claude Desktop workiq MCP" \
+    "$(printf '{"command": "%s", "args": ["%s", "mcp"]}' "$(command -v node)" "$(realpath "$(command -v workiq)")")" \
+    mcpServers workiq && warn "restart Claude Desktop to load it"
+}
+
+claude_trust_home() {
+  [[ -f "$HOME/.claude.json" ]] || { skip "no ~/.claude.json yet: run claude once, then ./install.sh agents"; return 0; }
+  json_set "$HOME/.claude.json" "Claude Code trusts ~" true projects "$HOME" hasTrustDialogAccepted
 }
 
 stage_agents() {
   stage "agents"
 
   ensure_bin claude   "claude install" bash -c 'curl -fsSL https://claude.ai/install.sh | bash'
+  claude_trust_home
 
   (( WITH_WORK )) && ensure_bin workiq "npm i -g @microsoft/workiq" npm i -g @microsoft/workiq
   ensure_bin wispr "uv tool install wispr-cli" uv tool install git+https://github.com/Akramz/wispr-cli
