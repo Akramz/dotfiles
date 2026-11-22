@@ -2,6 +2,8 @@ typeset -U path   # no duplicate PATH entries when shells nest
 
 # uv tools and claude
 export PATH="$HOME/.local/bin:$PATH"
+# uv's own Pythons only: removing conda (11-21) broke every tool built on its Python.
+export UV_PYTHON_PREFERENCE=only-managed
 [[ -f "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"
 
 # Linux: npm globals under $HOME (the system prefix is root-owned on most images).
