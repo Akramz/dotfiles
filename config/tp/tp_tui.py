@@ -24,6 +24,7 @@ Interaction (always-on type-to-filter):
                 session -> attach to it
   Ctrl-A        name a new pi session in the project & enter it
   Ctrl-D        delete (project = all its sessions; session = just it), confirmed
+  Ctrl-R        rescan the ssh hosts now (offline ones otherwise wait a minute)
   Esc / Ctrl-C  quit
 
 The chosen action is written to ``$TP_RESULT_FILE`` for the shell wrapper:
@@ -42,7 +43,6 @@ import shutil
 import subprocess
 import sys
 import threading
-import time
 from collections import Counter
 
 SEP = "\t"
@@ -333,6 +333,7 @@ class UI:
         self.remote = {}            # host -> (sessions, status) or None if offline
         self.last = {}              # host -> last scan result, to skip unchanged scans
         self.hosts = None           # scanned host names, once read
+        self.wake = {}              # host -> Event that cuts its scan_loop wait short
         self.lock = threading.Lock()
         self.fresh = False          # a scan finished since the last merge
         self.projects = load_projects()
@@ -353,15 +354,18 @@ class UI:
     # -- remote scans ------------------------------------------------------ #
     def start_scans(self):
         hosts = ssh_hosts()
+        self.wake = {h: threading.Event() for h in hosts}
         with self.lock:
             self.hosts = hosts
         for h in hosts:
             threading.Thread(target=self.scan_loop, args=(h,), daemon=True).start()
 
     def scan_loop(self, host):
+        wake = self.wake[host]
         while True:
             self.rescan(host)
-            time.sleep(REMOTE_POLL if self.remote.get(host) else OFFLINE_POLL)
+            wake.wait(REMOTE_POLL if self.remote.get(host) else OFFLINE_POLL)
+            wake.clear()
 
     def rescan(self, host):
         out = ssh_run(host, REMOTE_SCAN)
@@ -374,6 +378,15 @@ class UI:
             self.last[host] = seen
             self.remote[host] = result
             self.fresh = True
+
+    def rescan_offline(self):
+        with self.lock:
+            offline = [h for h, r in self.remote.items() if not r]
+            for h in offline:
+                del self.remote[h]
+        for h in offline:
+            self.wake[h].set()
+        self.message = f"rescanning {len(offline)} offline host(s)" if offline else "no offline hosts"
 
     def remote_sessions(self):
         with self.lock:
@@ -497,7 +510,7 @@ class UI:
             y = body_top + (i - self.top)
             self._render_row(y, i, w)
 
-        hint = " arrows move/fold  enter open  ^A new  ^D delete  type to filter  esc quit"
+        hint = " arrows move/fold  enter open  ^A new  ^D delete  ^R rescan  type to filter  esc quit"
         self._addstr(h - 1, 0, hint[:w], curses.A_DIM)
         if self.message:
             self._addstr(h - 2, 0, (" " + self.message)[:w])
@@ -801,6 +814,8 @@ class UI:
                     if self.on_new() == "quit":
                         return self.action
                     continue
+                if ch == "\x12":            # Ctrl-R
+                    self.rescan_offline(); continue
                 if ch == "\x0e":            # Ctrl-N
                     self.move(1); continue
                 if ch == "\x10":            # Ctrl-P
