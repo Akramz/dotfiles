@@ -23,7 +23,7 @@ function pluginRoots(): string[] {
 			.filter(([id]) => enabled[id])
 			.map(([, v]: [string, any]) => v?.[0]?.installPath)
 			.filter((p): p is string => !!p && existsSync(p)),
-		// Plugins that live inside the skills folder (paper-search, ty-lsp).
+		// Plugins that live inside the skills folder (ty-lsp).
 		...subdirs(`${home}/.claude/skills`).filter((d) => existsSync(`${d}/.claude-plugin`)),
 	];
 }
