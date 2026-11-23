@@ -10,7 +10,7 @@ MARK = {e: m for m, exts in [
     (("//", "/*"), ".js .mjs .cjs .ts .tsx .jsx .go .rs .c .h .cc .cpp .hpp .java .kt .swift .cs .scala .dart"),
     (("--",), ".lua .sql .hs"),
 ] for e in exts.split()}
-PRAGMA = re.compile(r"#!|noqa|type:|pylint|pyright|mypy|ruff|isort|fmt:|pragma|shellcheck"
+PRAGMA = re.compile(r"#!|noqa|type:|ty:|nosec|pylint|pyright|mypy|ruff|isort|fmt:|pragma|shellcheck"
                     r"|eslint|@ts-|prettier|biome-|nolint|go:|luacheck|-\*-")
 UV_META = re.compile(r"(?ms)^# /// script$.*?^# ///$")
 
