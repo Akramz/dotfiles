@@ -72,7 +72,8 @@ OFFLINE_POLL = 60.0         # ...and of one that did not
 # system tmux there would talk to a different server.
 REMOTE_PATH = "PATH=/home/linuxbrew/.linuxbrew/bin:/opt/homebrew/bin:$PATH"
 # One line per session (S), then its active pane (P), as classify() reads it.
-REMOTE_SCAN = REMOTE_PATH + "\ntmux list-sessions -F '" + FIELDS + "' 2>/dev/null |" + """
+REMOTE_SCAN = REMOTE_PATH + "\nsessions() { tmux list-sessions -F '" + FIELDS + "' 2>/dev/null; }" + """
+{ sessions || { pkill -USR1 -u "$(id -u)" -x 'tmux: server' && sleep 0.2 && sessions; }; } |
 while IFS= read -r s; do
   printf 'S\t%s\n' "$s"
   tmux capture-pane -p -t "=${s%%\t*}:" | sed 's/^/P\t/'

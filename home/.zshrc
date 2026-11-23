@@ -47,7 +47,7 @@ _tp_new() {
 _tp_new_remote() {
   local host=${2%%:*} dir=${2#*:}
   [[ $dir == /* ]] && dir=${(q)dir} || dir="~/${(q)${dir#\~/}}"
-  local inner="cd $dir && exec tmux new-session -A -s ${(q)1} ${(q)3}"
+  local inner="{ tmux ls || { pkill -USR1 -u \$(id -u) -x 'tmux: server' && sleep 0.2; }; } >/dev/null 2>&1; cd $dir && exec tmux new-session -A -s ${(q)1} ${(q)3}"
   local rcmd="exec \"\$(command -v zsh || echo \"\$SHELL\")\" -ilc ${(q)inner}"
   _tp_new "$1@$host" "$PWD" "ssh -t ${(q)host} ${(q)rcmd} || sleep 5"
 }
