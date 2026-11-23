@@ -1,0 +1,7 @@
+#!/bin/bash
+[[ $(uname -s) == Darwin ]] || exit 0
+nc -z 127.0.0.1 48730 2>/dev/null && exit 0
+conf=~/.config/vm-inbox/rsyncd.conf
+mkdir -p ~/vm-inbox "${conf%/*}"
+printf '%s\n' '[inbox]' "path = $HOME/vm-inbox" 'read only = no' 'write only = yes' 'use chroot = no' > "$conf"
+exec /opt/homebrew/bin/rsync --daemon --address=127.0.0.1 --port=48730 --config="$conf" --log-file="${conf%/*}/log"

@@ -113,16 +113,25 @@ adm() {
   if command tmux has-session -t "=$n" 2>/dev/null; then tp "$n"; else pie "$n" ~; fi
 }
 
-# vcp — copy files or folders to or from a VM. dest is always a folder; a trailing / never matters.
+# vcp — copy files or folders to or from a VM, or from one VM to another (streamed through
+# here). dest is always a folder; a trailing / never matters.
 #   pull: dest defaults to here.  push: dest defaults to the same folder under ~ as here.
+#   VM to VM: dest defaults to the source's folder.
 # `function` form: the noglob alias below would break `vcp()` when .zshrc is re-sourced.
 function vcp {
   if [[ ! -e $1 && $1 == *:* ]]; then
+    if [[ ! -e $2 && $2 == *:* ]]; then
+      local src=${${1#*:}%/} dh=${2%%:*} dest=${2#*:}
+      dest=${dest:-${src:h}}
+      echo "→ $dh:$dest/"
+      ssh $dh "mkdir -p $dest" && scp -3 -r "${1%/}" "$dh:$dest/"
+      return
+    fi
     local dest=${2:-.}
     mkdir -p "$dest" && rsync -aP "${1%/}" "$dest/"
     return
   fi
-  (( $# >= 2 )) || { echo "usage: vcp host:path [dest] | vcp path… host[:dest]" >&2; return 2; }
+  (( $# >= 2 )) || { echo "usage: vcp host:path [dest] | vcp path… host[:dest] | vcp host:path host2:[dest]" >&2; return 2; }
   local -a src=(${~@[1,-2]})
   local t=${@[-1]}; local host=${t%%:*}; local dest=${${t#$host}#:}
   dest=${${dest#\~/}%/}

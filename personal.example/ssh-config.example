@@ -23,3 +23,10 @@ Host gpu-box
 #   IdentityFile ~/.ssh/<key>.pem
 #   StrictHostKeyChecking accept-new
 #   ProxyCommand nc "$(az ml compute show -n <instance-name> -g <resource-group> -w <workspace> --query network_settings.public_ip_address -o tsv 2>/dev/null)" 50000
+
+# Agents on your hosts send files to the Mac with `vsend`, through this tunnel into the
+# write-only receiver that ~/bin/vm-inbox starts (dotfiles home/bin/vsend, home/bin/vm-inbox).
+Host * !github.com !personal !work
+  RemoteForward 48730 127.0.0.1:48730
+  PermitLocalCommand yes
+  LocalCommand ~/bin/vm-inbox
