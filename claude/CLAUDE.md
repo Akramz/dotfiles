@@ -41,6 +41,12 @@
 - Commit and push only when I ask (for example with /push). Never commit or push as the tail
   of another task. The same goes for submodules.
 
+## Follow-ups
+
+- Open follow-ups live in `~/projects/Personal/dotfiles/claude-memory/Followups.md`, one per line: `- YYYY-MM-DD what to do (memory: slug)`.
+- Add one when I ask, or when something is waiting on a person or a date.
+- When you finish one, delete its line.
+
 ## This machine
 
 - Python: `uv` for per-project envs and scripts.
