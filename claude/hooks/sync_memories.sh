@@ -8,6 +8,6 @@
 repo="$(dirname "$(readlink -f "$0")")/../../claude-memory"
 [ -d "$repo/.git" ] || exit 0
 cd "$HOME/.claude/projects" || exit 0
-rsync -aR --delete $(find . -mindepth 2 -maxdepth 2 -type d -name memory ! -empty) \
-  "$repo/projects/" >/dev/null 2>&1
+find . -mindepth 2 -maxdepth 2 -type d -name memory ! -empty \
+  -exec sh -c 'rsync -aR --delete "$@" "$0"' "$repo/projects/" {} + >/dev/null 2>&1
 exit 0

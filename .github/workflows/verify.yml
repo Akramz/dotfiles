@@ -1,0 +1,16 @@
+name: verify
+on: [push, pull_request]
+jobs:
+  verify:
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - if: runner.os == 'macOS'
+        run: brew install shellcheck
+        env:
+          HOMEBREW_NO_AUTO_UPDATE: 1
+      - run: ./verify.sh

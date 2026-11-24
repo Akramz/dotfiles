@@ -5,7 +5,7 @@
 #
 #   ./install.sh                     every stage, in order
 #   ./install.sh link macos          just those stages
-#   ./install.sh doctor              verify only, changes nothing
+#   ./install.sh doctor              check links and that the tools run, changes nothing
 #   ./install.sh pull                copy drifted files back into the repo
 #
 # Stages: brew shell link macos menu agents vscode secrets rust
@@ -340,7 +340,7 @@ stage_link() {
   done
 
   [[ -d "$BACKUP_DIR" ]] && warn "backups: ${BACKUP_DIR/#$HOME/~}"
-  (( IS_MAC )) && ensure_mac_sshd
+  (( IS_MAC )) && [[ -z "${DOTFILES_SANDBOX:-}" ]] && ensure_mac_sshd
   return 0
 }
 
@@ -763,35 +763,77 @@ doctor_check_bundle() {  # doctor_check_bundle <label> <Brewfile path>
 
 run_doctor() {
   stage "doctor"
-  local entry src dst abs_src problems=0
+  local entry src dst abs_src
 
   for entry in "${LINKS[@]}"; do
     src="${entry%%|*}"; dst="${entry#*|}"; abs_src="$DOTFILES/$src"
     if [[ ! -e "$abs_src" ]]; then
-      fail "missing in repo: $src"; problems=$((problems + 1))
+      fail "missing in repo: $src"
     elif [[ ! -e "$dst" && ! -L "$dst" ]]; then
-      fail "not installed: ${dst/#$HOME/~}"; problems=$((problems + 1))
+      fail "not installed: ${dst/#$HOME/~}"
     elif [[ ! -L "$dst" ]]; then
       # An app replaced the symlink with a real file. `./install.sh pull`
       # folds those edits back into the repo so you can commit them.
-      fail "DRIFT (real file, not a link): ${dst/#$HOME/~}"; problems=$((problems + 1))
+      fail "DRIFT (real file, not a link): ${dst/#$HOME/~}"
     elif [[ "$(readlink "$dst")" != "$abs_src" ]]; then
-      fail "links elsewhere: ${dst/#$HOME/~} -> $(readlink "$dst")"; problems=$((problems + 1))
+      fail "links elsewhere: ${dst/#$HOME/~} -> $(readlink "$dst")"
     else
       same "${dst/#$HOME/~}"
     fi
   done
 
-  if have brew; then
-    doctor_check_bundle "$BREWFILE" "$DOTFILES/$BREWFILE"
-    local layer
-    for layer in "${LAYERS[@]}"; do
-      (( IS_MAC )) && [[ -f "$DOTFILES/$layer/Brewfile" ]] && doctor_check_bundle "$layer/Brewfile" "$DOTFILES/$layer/Brewfile"
+  if [[ -z "${DOTFILES_SANDBOX:-}" ]]; then
+    if have brew; then
+      doctor_check_bundle "$BREWFILE" "$DOTFILES/$BREWFILE"
+      local layer
+      for layer in "${LAYERS[@]}"; do
+        (( IS_MAC )) && [[ -f "$DOTFILES/$layer/Brewfile" ]] && doctor_check_bundle "$layer/Brewfile" "$DOTFILES/$layer/Brewfile"
+      done
+    fi
+    doctor_health
+  fi
+
+  (( FAILURES == 0 )) && printf '\n%sdoctor: all clear%s\n' "$GRN" "$RST"
+  return 0
+}
+
+# Links can be fine while the tools behind them are dead: a Python or Node runtime
+# deleted by an upgrade, a tmux socket gone, MCP servers outliving their agent.
+doctor_health() {
+  stage "health"
+  local tool flag d name var sock pid ppid cmd parent orphans='' before=$FAILURES
+
+  for tool in claude pi gh uv tmux; do
+    have "$tool" || continue
+    flag=--version; [[ $tool == tmux ]] && flag=-V
+    "$tool" "$flag" >/dev/null 2>&1 || fail "$tool is installed but does not run: try $tool $flag"
+  done
+
+  if have uv; then
+    for d in "$(uv tool dir 2>/dev/null)"/*/; do
+      [[ -d "$d" && ! -x "$d/bin/python" ]] || continue
+      name="${d%/}"; name="${name##*/}"
+      fail "uv tool $name: its Python is gone — uv tool install --force <spec in ${d/#$HOME/~}uv-receipt.toml>"
     done
   fi
 
-  # Only link problems count as failures. A warning above is still a warning.
-  (( problems == 0 )) && printf '\n%sdoctor: every link clear%s\n' "$GRN" "$RST"
+  for var in CONDA_PREFIX VIRTUAL_ENV; do
+    [[ -n "${!var:-}" && ! -d "${!var}" ]] && warn "this shell's $var points at a deleted folder; open a new shell"
+  done
+
+  sock="${TMUX:-}"; sock="${sock%%,*}"
+  if [[ -n "$sock" && ! -S "$sock" ]]; then
+    pid="${TMUX#*,}"; pid="${pid%%,*}"
+    fail "tmux socket $sock is gone; kill -USR1 $pid recreates it (never kill the server)"
+  fi
+
+  while read -r pid ppid cmd; do
+    parent=; [[ $cmd =~ --parent-pid=([0-9]+) ]] && parent="${BASH_REMATCH[1]}"
+    if [[ "$ppid" == 1 ]] || { [[ -n "$parent" ]] && ! kill -0 "$parent" 2>/dev/null; }; then orphans+=" $pid"; fi
+  done < <(ps -axo pid=,ppid=,command= | grep '[c]hrome-devtools-mcp')
+  [[ -n "$orphans" ]] && warn "orphaned chrome-devtools-mcp processes: kill$orphans"
+
+  (( FAILURES == before )) && same "tools run"
   return 0
 }
 

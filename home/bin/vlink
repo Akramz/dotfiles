@@ -2,6 +2,7 @@
 host=${1:?usage: vlink HOST  (lets agents on HOST reach this Mac as \`ssh mac\`)}
 d=~/.config/mac-sshd
 [[ -f $d/hostkey.pub ]] || { echo "vlink: no $d/hostkey.pub; run ./install.sh link first" >&2; exit 1; }
+# shellcheck disable=SC2087
 pub=$(ssh "$host" bash -s <<EOF
 mkdir -p ~/.ssh && chmod 700 ~/.ssh
 [ -f ~/.ssh/mac ] || ssh-keygen -q -t ed25519 -N '' -C "\$(hostname -s)->mac" -f ~/.ssh/mac

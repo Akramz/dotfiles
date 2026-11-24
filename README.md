@@ -67,7 +67,12 @@ Try the whole setup, take just the parts you need, or fork it and make it your o
   line to keep logins between sessions.
 - **Keep your machine and the repo in sync.** Some apps replace a linked
   config with a regular file. `./install.sh doctor` detects this;
-  `./install.sh pull` copies the changes back into the repo.
+  `./install.sh pull` copies the changes back into the repo. `doctor` also
+  checks that the tools still run: uv tools whose Python is gone, a deleted
+  tmux socket, orphaned chrome-devtools-mcp processes.
+- **Checked on every push.** [`verify.sh`](verify.sh) lints, then installs
+  every link into a throwaway `$HOME` and runs `doctor` there, in a few
+  seconds. CI runs it on macOS and Ubuntu.
 
 A few useful skills:
 
