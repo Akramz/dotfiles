@@ -614,6 +614,7 @@ stage_agents() {
 
   (( WITH_WORK )) && ensure_bin workiq "npm i -g @microsoft/workiq" npm i -g @microsoft/workiq
   ensure_bin wispr "uv tool install wispr-cli" uv tool install git+https://github.com/Akramz/wispr-cli
+  ensure_bin instapaper "uv tool install instapaper-cli" uv tool install git+https://github.com/Akramz/instapaper-cli
   ensure_bin hf "uv tool install huggingface_hub" uv tool install huggingface_hub
   ensure_bin ruff "uv tool install ruff" uv tool install ruff
   ensure_bin pytest "uv tool install pytest" uv tool install pytest
