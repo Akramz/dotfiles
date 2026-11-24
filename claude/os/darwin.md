@@ -2,7 +2,7 @@
 
 ## Tools
 
-Homebrew at `/opt/homebrew`. Docker via OrbStack.
+Homebrew at `/opt/homebrew`.
 
 ## Opening apps and files
 

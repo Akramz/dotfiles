@@ -35,10 +35,6 @@ Try the whole setup, take just the parts you need, or fork it and make it your o
 - **Less typing in the shell.** `cd` and `z` list the new folder; `up` updates
   brew and Claude Code. A new shell starts in about 0.3 s.
   ([`home/.zshrc`](home/.zshrc))
-- **Conversations name themselves.** Claude Code already titles each
-  conversation after the first prompt but only shows it in `/resume`; a hook puts
-  it on the prompt bar by the next prompt. `/rename` still wins.
-  ([`auto_title.py`](claude/hooks/auto_title.py))
 - **One line under every Claude and pi prompt.** This calendar month's spend
   across every coding CLI ccusage reads (Claude Code, pi, ...), and the
   tmux sessions you are not looking at that are *waiting* on you or *done* since
@@ -57,8 +53,7 @@ Try the whole setup, take just the parts you need, or fork it and make it your o
   `/skill:push`), plugin MCP servers, vim keys, sessions that name themselves,
   and the agent-bar line. It searches and reads the web through
   [Exa](https://exa.ai) ([`pi/mcp.json`](pi/mcp.json)). `pie name [dir]` starts
-  it in tmux, like `cld`; `adm` opens a pi session in `~` for mail and calendar
-  work. ([`pi/`](pi))
+  it in tmux, like `cld`. ([`pi/`](pi))
 - **pi shares Claude's memory.** A rule tells pi where Claude Code keeps its
   per-project memory and how to add to it. ([`pi/memory.md`](pi/memory.md))
 - **Agents browse out of sight.** Chrome DevTools MCP runs headless with a fresh
@@ -153,7 +148,7 @@ before using this setup.
 | Where | What it does |
 |---|---|
 | `cld` in [`home/.zshrc`](home/.zshrc) | `claude --permission-mode auto`: a classifier approves routine actions; risky ones still ask. `cld test [dir]` starts it in dir (default: here); `cld test vm:dir` runs it in tmux on an ssh host (`vm:` alone is its `~`), survives disconnects, and reattaches when rerun. Dash args pass through: `cld test --chrome` gives the session browser tools |
-| `pie`, `adm`, and ctrl-a in `tp` | `pi` on Opus 5.5 through GitHub Copilot. pi has no permission prompts: every tool call runs. It trusts every folder (`defaultProjectTrust` in [`pi/settings.json`](pi/settings.json)), so a repo's `.pi/` extensions load without asking |
+| `pie` and ctrl-a in `tp` | `pi` on Opus 5.5 through GitHub Copilot. pi has no permission prompts: every tool call runs. It trusts every folder (`defaultProjectTrust` in [`pi/settings.json`](pi/settings.json)), so a repo's `.pi/` extensions load without asking |
 | [`claude/settings.json`](claude/settings.json) | auto mode, `git push` allowed, [Code Mode](https://code.claude.com/docs/en/code-mode) on (experimental; Claude asks once before it starts) |
 | [`vscode/settings.json`](vscode/settings.json) | agent tools auto-approved; every commit pushes; untrusted files open without asking |
 | [`claude/init-submodules.sh`](claude/init-submodules.sh) | checks out submodules in every repo Claude opens, untrusted clones included |

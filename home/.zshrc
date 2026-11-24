@@ -106,12 +106,6 @@ _tp_launch_complete() {
 cld() { _tp_launch 'claude --permission-mode auto' '' "$@" }
 pie() { _tp_launch pi pi "$@" }
 compdef _tp_launch_complete cld pie
-# adm [name] — the pi session in ~ for mail, calendar and other admin; attaches if it exists.
-# pi reads Claude's memory (pi/extensions/claude-context.ts), so admin work need not spend Claude budget.
-adm() {
-  local n=${1:-admin}
-  if command tmux has-session -t "=$n" 2>/dev/null; then tp "$n"; else pie "$n" ~; fi
-}
 
 # vcp — copy files or folders to or from a VM, or from one VM to another (streamed through
 # here). dest is always a folder; a trailing / never matters.

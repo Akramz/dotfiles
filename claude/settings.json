@@ -44,17 +44,6 @@
         ]
       }
     ],
-    "UserPromptSubmit": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "$HOME/.claude/hooks/auto_title.py"
-          }
-        ]
-      }
-    ],
     "UserPromptExpansion": [
       {
         "matcher": "",
@@ -93,12 +82,9 @@
     "cc-plugin-you-should-know@builtin": true,
     "html-plan@claude-community": true,
     "security-guidance@claude-plugins-official": true,
-    "duckdb-skills@claude-plugins-official": true,
     "microsoft-docs@claude-plugins-official": true,
     "mpc@mpc": true,
-    "chrome-devtools-mcp@claude-plugins-official": true,
-    "mcp-server-dev@claude-plugins-official": true,
-    "html-explain@html-explain": true
+    "chrome-devtools-mcp@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "claude-community": {
@@ -111,12 +97,6 @@
       "source": {
         "source": "github",
         "repo": "Akramz/mpc"
-      }
-    },
-    "html-explain": {
-      "source": {
-        "source": "github",
-        "repo": "Akramz/html-explain"
       }
     }
   },

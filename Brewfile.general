@@ -5,8 +5,6 @@
 #
 # Work-only software (Microsoft casks/CLIs) lives in work/Brewfile, installed
 # with --with-work. Your own apps go in personal/Brewfile.
-#
-# Docker comes from OrbStack (a cask below), not the docker formulae.
 
 # ── shell + terminal ────────────────────────────────────────────
 brew "zsh"
@@ -26,7 +24,7 @@ brew "hunk"               # review-first terminal diff viewer; skill: claude/ski
 brew "node"
 brew "uv"                 # Python tools and envs
 brew "ty"                 # Python type checker for the claude/skills/ty-lsp plugin
-brew "duckdb"             # SQL over parquet/csv/geo files; used by the duckdb-skills plugin
+brew "duckdb"             # SQL over parquet/csv/geo files; used by agents
 brew "go"
 brew "rbenv"
 brew "cmake"
@@ -76,7 +74,7 @@ cask "visual-studio-code"
 
 # ── AI ──────────────────────────────────────────────────────────
 cask "claude"
-brew "pi-coding-agent"    # the `pi` CLI used by tp / pie / adm
+brew "pi-coding-agent"    # the `pi` CLI used by tp / pie
 
 # ── knowledge ───────────────────────────────────────────────────
 cask "obsidian"
@@ -98,7 +96,6 @@ cask "kap"
 cask "keycastr"
 
 # ── dev infrastructure ──────────────────────────────────────────
-cask "orbstack"           # Docker replacement; also adds the `orb` ssh host
 cask "mactex-no-gui"      # pdflatex
 cask "gcloud-cli"
 

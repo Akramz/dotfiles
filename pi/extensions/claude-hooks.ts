@@ -70,7 +70,7 @@ export default function (pi: ExtensionAPI) {
 			if (rule && !event.text.includes(rule)) return { action: "transform", text: `${event.text}\n\n${rule}` };
 		}
 
-		// Name the session after the first real prompt (claude/hooks/auto_title.py). /name wins.
+		// Name the session after the first real prompt. /name wins.
 		if (ctx.hasUI && !titling && event.source === "interactive" && !pi.getSessionName() && !event.text.startsWith("/")) {
 			titling = true;
 			void titleFor(event.text, ctx).then((t) => {

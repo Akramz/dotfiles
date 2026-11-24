@@ -1,8 +1,5 @@
 # Shape of ~/.ssh/config: save as personal/ssh-config. See README.md in this folder.
 
-# OrbStack inserts this itself on install; it must stay above every Host block.
-Include ~/.orbstack/ssh/config
-
 Host gpu-box
   HostName <host-or-ip>
   Port 22

@@ -92,7 +92,6 @@ install_or_skip() {  # install_or_skip <bin-name> — returns 0 if install is ne
 # ════════════════════════════════════════════════════════════════
 LINKS_ALL=(
   "home/.zshrc|$HOME/.zshrc"
-  "home/.zprofile|$HOME/.zprofile"
   "home/.zshenv|$HOME/.zshenv"
   "home/.tmux.conf|$HOME/.tmux.conf"
   "home/.gitconfig|$HOME/.gitconfig"
@@ -694,7 +693,7 @@ stage_secrets() {
   stage "secrets"
 
   # ~/.ssh/config is a link to personal/ssh-config (the `link` stage), so
-  # edits made through it, by you or by OrbStack, land in personal/.
+  # edits made through it land in personal/.
   # ── macOS text replacements ───────────────────────────────────
   local env_file="$DOTFILES/personal/secrets.env"
   if [[ ! -f "$env_file" ]]; then
