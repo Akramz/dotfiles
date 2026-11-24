@@ -90,16 +90,6 @@ export default function (pi: ExtensionAPI) {
 		});
 		if (reply.decision === "block") return { content: [...event.content, { type: "text", text: reply.reason }], isError: true };
 	});
-
-	// /bye: the bye skill, then a new session (claude/hooks/bye_new.py did this through tmux).
-	pi.registerCommand("bye", {
-		description: "End-of-session handoff, then start a new session",
-		handler: async (args, ctx) => {
-			pi.sendUserMessage(`/skill:bye ${args}`.trim(), { expandPromptTemplates: true });
-			await ctx.waitForIdle();
-			await ctx.newSession({ parentSession: ctx.sessionManager.getSessionFile() });
-		},
-	});
 }
 
 async function titleFor(prompt: string, ctx: any): Promise<string> {

@@ -55,7 +55,7 @@ Try the whole setup, take just the parts you need, or fork it and make it your o
   extensions give it what Claude Code has: `CLAUDE.md` with its `@` imports, the
   per-project memory, skills and plugins by their Claude names (`/push`, not
   `/skill:push`), plugin MCP servers, vim keys, sessions that name themselves,
-  the agent-bar line, and `/bye`. It searches and reads the web through
+  and the agent-bar line. It searches and reads the web through
   [Exa](https://exa.ai) ([`pi/mcp.json`](pi/mcp.json)). `pie name [dir]` starts
   it in tmux, like `cld`; `adm` opens a pi session in `~` for mail and calendar
   work. ([`pi/`](pi))

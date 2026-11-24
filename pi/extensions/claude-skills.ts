@@ -67,8 +67,8 @@ export default function (pi: ExtensionAPI) {
 		} catch {}
 	}
 
-	// Register `/name` now, so it autocompletes. claude-hooks.ts owns /bye.
-	const seen = new Set(["bye"]);
+	// Register `/name` now, so it autocompletes.
+	const seen = new Set<string>();
 	for (const dir of [`${home}/.pi/agent/skills`, `${home}/.agents/skills`, ...skillDirs]) {
 		for (const s of loadSkillsFromDir({ dir, source: "claude" }).skills) {
 			if (seen.has(s.name)) continue;

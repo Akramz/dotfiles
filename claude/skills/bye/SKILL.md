@@ -1,12 +1,6 @@
 ---
 name: bye
 description: End-of-session handoff before /new or exiting, giving the agent room to close out however they see fit. Use when the user runs /bye before ending a session.
-hooks:
-  Stop:
-    - hooks:
-        - type: command
-          command: $HOME/.claude/hooks/bye_new.py
-          once: true
 ---
 
 # Bye
