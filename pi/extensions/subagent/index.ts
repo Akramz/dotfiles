@@ -300,7 +300,8 @@ function getPiInvocation(args: string[]): { command: string; args: string[] } {
 	const isBunVirtualScript =
 		currentScript !== undefined &&
 		(currentScript.startsWith("/$bunfs/root/") || /^[A-Za-z]:[\\/]~BUN[\\/]root[\\/]/.test(currentScript));
-	if (currentScript && !isBunVirtualScript && fs.existsSync(currentScript)) {
+	// Local change: a Homebrew upgrade can delete the Cellar runtime a long-running pi started from.
+	if (currentScript && !isBunVirtualScript && fs.existsSync(currentScript) && fs.existsSync(process.execPath)) {
 		return { command: process.execPath, args: [currentScript, ...args] };
 	}
 
