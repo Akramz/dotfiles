@@ -15,3 +15,4 @@ open it with `open -g` without being asked, and give its path or URL in one line
 
 `vcp` (in `~/.zshrc`) copies files or folders between the Mac and a host, or from one host to
 another: `vcp hostA:<path> hostB:<dir>`. Files that agents on hosts send with `vsend` land in `~/vm-inbox/<host>/`.
+Agents on a host reach this Mac as `ssh mac` once I ran `vlink <host>` here (keys in `~/.config/mac-sshd/`).

@@ -1,3 +1,5 @@
 #!/bin/bash
-host=$1; shift
-exec ssh "$host" "exec \"\$(command -v zsh || echo \"\$SHELL\")\" -ilc $(printf %q "$*")"
+host=${1%%/*}; rest=; [[ $1 == */* ]] && rest=${1#*/}; shift
+cmd=$*
+[[ -n $rest ]] && cmd="rsh $(printf %q "$rest") $(printf %q "$cmd")"
+exec ssh "$host" "exec \"\$(command -v zsh || echo \"\$SHELL\")\" -ilc $(printf %q "$cmd")"

@@ -1,10 +1,9 @@
 #!/bin/bash
-port=48730
 (( $# )) || { echo "usage: vsend path…  (copies to the Mac's ~/vm-inbox/<host>/)" >&2; exit 2; }
-if ! (exec 3<>/dev/tcp/127.0.0.1/$port) 2>/dev/null; then
-  echo "vsend: no tunnel to the Mac. It is open while the Mac has an ssh connection to this host, e.g. a cld/pie <name> <host>:<dir> session." >&2
+if ! ssh -o ConnectTimeout=5 mac true 2>/dev/null; then
+  echo "vsend: no tunnel to the Mac. It is open while the Mac has an ssh connection to this host, e.g. a cld/pie <name> <host>:<dir> session. A new host needs \`vlink <host>\` on the Mac once." >&2
   exit 1
 fi
 host=$(hostname -s)
-rsync -a --partial "${@%/}" "rsync://127.0.0.1:$port/inbox/$host/" || exit
+rsync -a --partial --rsync-path="mkdir -p vm-inbox/$host && rsync" "${@%/}" "mac:vm-inbox/$host/" || exit
 for p in "${@%/}"; do echo "on the Mac: ~/vm-inbox/$host/${p##*/}"; done

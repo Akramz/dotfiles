@@ -103,7 +103,6 @@ LINKS_ALL=(
   "home/bin/gh|$HOME/bin/gh"
   "home/bin/rsh|$HOME/bin/rsh"
   "home/bin/vsend|$HOME/bin/vsend"
-  "home/bin/vm-inbox|$HOME/bin/vm-inbox"
   "config/cd4a/config.json|$HOME/.config/cd4a/config.json"
   "config/tp/tp_tui.py|$HOME/.config/tp/tp_tui.py"
   "config/tmux-resurrect/agents.sh|$HOME/.tmux/plugins/tmux-resurrect/save_command_strategies/agents.sh"
@@ -130,6 +129,8 @@ LINKS_ALL=(
 LINKS_MAC=(
   "home/bin/poke_ghostty.sh|$HOME/bin/poke_ghostty.sh"
   "home/bin/ghostty_panes.py|$HOME/bin/ghostty_panes.py"
+  "home/bin/mac-sshd|$HOME/bin/mac-sshd"
+  "home/bin/vlink|$HOME/bin/vlink"
   "config/ghostty/config|$HOME/Library/Application Support/com.mitchellh.ghostty/config"
   "vscode/settings.json|$HOME/Library/Application Support/Code/User/settings.json"
   "vscode/keybindings.json|$HOME/Library/Application Support/Code/User/keybindings.json"
@@ -338,7 +339,36 @@ stage_link() {
   done
 
   [[ -d "$BACKUP_DIR" ]] && warn "backups: ${BACKUP_DIR/#$HOME/~}"
+  (( IS_MAC )) && ensure_mac_sshd
   return 0
+}
+
+# VM agents reach this Mac as `ssh mac` through the RemoteForward in personal/ssh-config.
+# A LaunchAgent, not a plain process, so their shells get the GUI session (open, clipboard).
+ensure_mac_sshd() {
+  local label=com.akramz.mac-sshd want
+  local plist="$HOME/Library/LaunchAgents/$label.plist"
+  want=$(cat <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+  <key>Label</key><string>$label</string>
+  <key>ProgramArguments</key><array><string>$HOME/bin/mac-sshd</string></array>
+  <key>RunAtLoad</key><true/>
+  <key>KeepAlive</key><true/>
+</dict></plist>
+EOF
+)
+  if [[ "$(cat "$plist" 2>/dev/null)" == "$want" ]] && launchctl print "gui/$UID/$label" >/dev/null 2>&1; then
+    same "mac-sshd LaunchAgent"; return 0
+  fi
+  mkdir -p "${plist%/*}" && printf '%s\n' "$want" > "$plist"
+  launchctl bootout "gui/$UID/$label" 2>/dev/null
+  if launchctl bootstrap "gui/$UID" "$plist"; then
+    changed "mac-sshd LaunchAgent (VM agents: ssh mac; link a VM once with vlink <host>)"
+  else
+    fail "could not load $plist"
+  fi
 }
 
 # ════════════════════════════════════════════════════════════════

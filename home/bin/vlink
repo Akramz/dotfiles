@@ -1,0 +1,29 @@
+#!/bin/bash
+host=${1:?usage: vlink HOST  (lets agents on HOST reach this Mac as \`ssh mac\`)}
+d=~/.config/mac-sshd
+[[ -f $d/hostkey.pub ]] || { echo "vlink: no $d/hostkey.pub; run ./install.sh link first" >&2; exit 1; }
+pub=$(ssh "$host" bash -s <<EOF
+mkdir -p ~/.ssh && chmod 700 ~/.ssh
+[ -f ~/.ssh/mac ] || ssh-keygen -q -t ed25519 -N '' -C "\$(hostname -s)->mac" -f ~/.ssh/mac
+echo 'mac $(cut -d' ' -f1,2 "$d/hostkey.pub")' > ~/.ssh/known_hosts_mac
+grep -qx 'Host mac' ~/.ssh/config 2>/dev/null || cat >> ~/.ssh/config <<'BLOCK'
+
+Host mac
+  HostName 127.0.0.1
+  Port 48730
+  User $USER
+  IdentityFile ~/.ssh/mac
+  IdentitiesOnly yes
+  HostKeyAlias mac
+  UserKnownHostsFile ~/.ssh/known_hosts_mac
+  StrictHostKeyChecking yes
+  ControlMaster auto
+  ControlPath ~/.ssh/cm-%C
+  ControlPersist 10m
+BLOCK
+chmod 600 ~/.ssh/config
+cat ~/.ssh/mac.pub
+EOF
+) || exit
+grep -qxF "$pub" "$d/authorized_keys" || { echo "$pub" >> "$d/authorized_keys"; echo "+ key ${pub##* } added"; }
+out=$(ssh -n "$host" 'ssh -o ConnectTimeout=5 mac hostname -s' 2>&1) && echo "✓ $host: ssh mac → $out" || { echo "✗ $host: ssh mac failed: $out" >&2; exit 1; }

@@ -55,7 +55,7 @@ brew "nvtop"
 
 # ── misc utilities ──────────────────────────────────────────────
 brew "wget"
-brew "rsync"              # vsend's receiving daemon (home/bin/vm-inbox); macOS openrsync's daemon crashes
+brew "rsync"              # VMs rsync with the Mac through mac-sshd; macOS openrsync breaks with GNU rsync
 brew "aria2"
 brew "nmap"
 brew "unar"

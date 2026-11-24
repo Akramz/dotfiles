@@ -1,0 +1,10 @@
+#!/bin/bash
+umask 077
+d=~/.config/mac-sshd
+mkdir -p "$d" && touch "$d/authorized_keys"
+[[ -f $d/hostkey ]] || ssh-keygen -q -t ed25519 -N '' -C mac -f "$d/hostkey"
+printf '%s\n' 'ListenAddress 127.0.0.1' 'Port 48730' "HostKey $d/hostkey" \
+  "AuthorizedKeysFile $d/authorized_keys" 'PasswordAuthentication no' \
+  'KbdInteractiveAuthentication no' 'UsePAM no' 'PidFile none' \
+  'SetEnv PATH=/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin' > "$d/sshd_config"
+exec /usr/sbin/sshd -D -f "$d/sshd_config" -E "$d/log"
