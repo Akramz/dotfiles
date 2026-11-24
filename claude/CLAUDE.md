@@ -5,6 +5,7 @@
 ## Writing
 
 - Write plain, simple, easy-to-understand, natural American English. Active voice.
+- Don't use a foreign phrase, a scientific word, or jargon when an everyday American English word works.
 - No fluff, no filler, no padding, no redundant summaries, no boilerplate. 
 - If a one-liner answer works, give a one-liner. Keep caveats and disclaimers short.
 - Explain at a high level unless I ask for depth.
