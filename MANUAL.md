@@ -70,6 +70,7 @@ macOS will not grant these from a script. Grant them on first launch, or in
   4. `gog auth alias set <alias> <email>` for each. The skill searches every alias unless you name one.
 - [ ] `wispr` skill (agents read your Wispr Flow meetings, transcripts and notes): `wispr login`. Tokens stay in `~/.config/wispr/auth.json`; sign in on each machine instead of copying the file.
 - [ ] `hf` (agents pull Hugging Face models and datasets): `hf auth login` with a read token from huggingface.co/settings/tokens. It saves to `~/.cache/huggingface/token`; sign in on each machine.
+- [ ] Exa (web search for pi): create a key at dashboard.exa.ai/api-keys, then `(umask 077; mkdir -p ~/.config/exa && pbpaste > ~/.config/exa/key)`. On each ssh host: `vcp ~/.config/exa <host>:~/.config/`.
 
 ## 7. Work machine (`--with-work`)
 
@@ -94,7 +95,7 @@ The rest comes from your company once you enrol:
 
 After `linux/setup.sh` (which ends by running `./install.sh`):
 
-- [ ] The §2 sign-ins and the §6 `gog` step. On a headless box, add `--manual` to `gog auth add`. Use `wispr login --no-browser` for the same reason.
+- [ ] The §2 sign-ins, the §6 `gog` step and the §6 Exa key copy. On a headless box, add `--manual` to `gog auth add`. Use `wispr login --no-browser` for the same reason.
 - [ ] Open a new SSH session. It should land in zsh with the `host:~ %` prompt.
 - [ ] `claude` → `/memory` lists `~/.claude/CLAUDE.md` and the `os.md` import; `/skills` lists the repo skills.
 - [ ] `tmux -V` is 3.3 or newer (brew's), so shift+enter works inside agent TUIs.

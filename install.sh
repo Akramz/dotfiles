@@ -120,6 +120,7 @@ LINKS_ALL=(
   "pi/memory.md|$HOME/.pi/agent/memory.md"
   "claude/skills|$HOME/.pi/agent/skills"
   "pi/settings.json|$HOME/.pi/agent/settings.json"
+  "pi/mcp.json|$HOME/.pi/agent/mcp.json"
   "pi/APPEND_SYSTEM.md|$HOME/.pi/agent/APPEND_SYSTEM.md"
   "pi/extensions|$HOME/.pi/agent/extensions"
   # Agents for the subagent extension (pi/extensions/subagent).
