@@ -35,10 +35,9 @@ Try the whole setup, take just the parts you need, or fork it and make it your o
 - **Less typing in the shell.** `cd` and `z` list the new folder; `up` updates
   brew and Claude Code. A new shell starts in about 0.3 s.
   ([`home/.zshrc`](home/.zshrc))
-- **One line under every Claude and pi prompt.** This calendar month's spend
-  across every coding CLI ccusage reads (Claude Code, pi, ...), and the
-  tmux sessions you are not looking at that are *waiting* on you or *done* since
-  you last had them open: `$142 this month · waiting: api-2 · done: docs`.
+- **One line under every Claude and pi prompt.** The tmux sessions you
+  are not looking at that are *waiting* on you or *done* since you last had them
+  open: `waiting: api-2 · done: docs`.
   ([`agent-bar`](claude/skills/agent-bar/hooks/register.ts),
   [`agent_bar.py`](home/bin/agent_bar.py))
 - **The right GitHub account for each repo.** With two accounts signed in, `gh`

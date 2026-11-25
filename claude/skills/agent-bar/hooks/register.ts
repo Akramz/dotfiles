@@ -1,6 +1,6 @@
 import type { Register } from 'claude-code'
 
-// One line under the prompt, e.g. `$142 this month · waiting: api-2 · done: docs`.
+// One line under the prompt, e.g. `waiting: api-2 · done: docs`.
 // ~/bin/agent_bar.py writes it; every session reads the same file and reruns the script
 // only when the file is a tick old, so thirty open sessions cost one run per tick.
 const TICK = 10_000

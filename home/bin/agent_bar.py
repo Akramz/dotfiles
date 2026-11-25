@@ -1,22 +1,15 @@
 #!/usr/bin/env python3
 # The line the agent-bar mod pins under every Claude Code and pi prompt:
-#   $142 this month · waiting: api-2 · done: web-1, docs
-# Spend is this calendar month's cost on this machine across every coding CLI ccusage reads
-# (Claude Code, pi...). "waiting" and "done" are tmux sessions you are not
-# attached to: blocked on a question, or finished since you last had them open.
-import glob
+#   waiting: api-2 · done: web-1, docs
+# "waiting" and "done" are tmux sessions you are not attached to: blocked on a question,
+# or finished since you last had them open.
 import json
 import os
-import subprocess
 import sys
-import time
 
 DIR = os.path.expanduser("~/.cache/agent-bar")
-LINE, SPEND, SESSIONS = (os.path.join(DIR, f) for f in ("line", "spend.json", "sessions.json"))
-ME = os.path.abspath(__file__)
-SPEND_TTL = 600
-# Where each CLI writes as it works; spend is refreshed only after one of these changes.
-LOGS = ["~/.claude/projects/*/*.jsonl", "~/.pi/agent/sessions/*/*.jsonl"]
+LINE = os.path.join(DIR, "line")
+SESSIONS = os.path.join(DIR, "sessions.json")
 SHOWN = 3
 
 
@@ -32,31 +25,6 @@ def save(path, text):
     with open(tmp, "w") as f:
         f.write(text)
     os.replace(tmp, path)
-
-
-def refresh_spend():
-    month = time.strftime("%Y-%m")
-    # Same pinned ccusage version as agent_usage.py.
-    out = subprocess.run(["npx", "-y", "ccusage@20.0.44", "monthly", "--since", time.strftime("%Y%m01"),
-                          "--json"], capture_output=True, text=True, timeout=300).stdout
-    cost = json.loads(out)["totals"]["totalCost"]
-    save(SPEND, json.dumps({"month": month, "cost": cost, "at": time.time()}))
-
-
-def spend():
-    month, now = time.strftime("%Y-%m"), time.time()
-    s = load(SPEND)
-    if s.get("month") != month:
-        s = {"month": month, "cost": None, "at": 0}
-    if now - s["at"] > SPEND_TTL:
-        used = s["cost"] is None or any(os.path.getmtime(f) > s["at"]
-                                        for p in LOGS for f in glob.glob(os.path.expanduser(p)))
-        # Stamp first: other sessions then wait a full TTL, even if the refresh fails.
-        save(SPEND, json.dumps({**s, "at": now}))
-        if used:
-            subprocess.Popen([sys.executable, ME, "--refresh-spend"], start_new_session=True,
-                             stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    return s["cost"]
 
 
 def sessions():
@@ -90,14 +58,7 @@ def names(label, items):
 
 def main():
     os.makedirs(DIR, exist_ok=True)
-    # Sessions run this from any project folder; npx must not see that folder's node_modules or .npmrc.
-    os.chdir(DIR)
-    if sys.argv[1:] == ["--refresh-spend"]:
-        return refresh_spend()
     parts = []
-    cost = spend()
-    if cost is not None:
-        parts.append(f"${cost:,.0f} this month")
     waiting, done = sessions()
     if waiting:
         parts.append(names("waiting", waiting))
