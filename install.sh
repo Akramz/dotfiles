@@ -420,6 +420,8 @@ stage_macos() {
 
   # Spaces must keep a fixed order — muscle memory for ctrl+<n> depends on it.
   set_default com.apple.dock mru-spaces bool false
+  # Don't jump to another Space when an app (e.g. from `open`) comes forward.
+  set_default com.apple.dock workspaces-auto-swoosh bool false
   set_default com.apple.dock show-recents bool false
   set_default com.apple.dock autohide bool false
   set_default com.apple.dock tilesize int 49
