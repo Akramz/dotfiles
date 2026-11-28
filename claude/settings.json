@@ -84,7 +84,8 @@
     "microsoft-docs@claude-plugins-official": true,
     "mpc@mpc": true,
     "chrome-devtools-mcp@claude-plugins-official": true,
-    "html-explain@html-explain": true
+    "html-explain@html-explain": true,
+    "agent-bar@skills-dir": false
   },
   "extraKnownMarketplaces": {
     "claude-community": {
