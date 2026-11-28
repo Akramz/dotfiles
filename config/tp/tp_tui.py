@@ -43,6 +43,7 @@ import shutil
 import subprocess
 import sys
 import threading
+import time
 from collections import Counter
 
 SEP = "\t"
@@ -67,6 +68,7 @@ POLL_INTERVAL = 1.0         # seconds between live status refreshes
 # --- remote hosts ---------------------------------------------------------- #
 SSH = ["ssh", "-o", "BatchMode=yes", "-o", "ConnectTimeout=10"]
 REMOTE_POLL = 5.0           # seconds between scans of a host that answered
+RETRY_POLL = 3.0
 OFFLINE_POLL = 60.0         # ...and of one that did not
 # Brew's tmux first: a non-interactive shell on Linux lacks it, and an older
 # system tmux there would talk to a different server.
@@ -240,12 +242,19 @@ def ssh_hosts():
     return hosts
 
 
-def ssh_run(host, command, timeout=20):
+def ssh_run(host, command):
     """Run command on host; None when ssh itself fails or times out."""
+    shared = subprocess.run(["ssh", "-O", "check", host], capture_output=True,
+                            stdin=subprocess.DEVNULL).returncode == 0
     try:
         p = subprocess.run([*SSH, host, command], capture_output=True, text=True,
-                           stdin=subprocess.DEVNULL, timeout=timeout)
-    except (OSError, subprocess.TimeoutExpired):
+                           stdin=subprocess.DEVNULL, timeout=8 if shared else 20)
+    except subprocess.TimeoutExpired:
+        if shared:
+            subprocess.run(["ssh", "-O", "stop", host], capture_output=True,
+                           stdin=subprocess.DEVNULL)
+        return None
+    except OSError:
         return None
     return None if p.returncode == 255 else p.stdout
 
@@ -369,7 +378,11 @@ class UI:
             wake.clear()
 
     def rescan(self, host):
-        out = ssh_run(host, REMOTE_SCAN)
+        for _ in range(3):
+            out = ssh_run(host, REMOTE_SCAN)
+            if out is not None:
+                break
+            time.sleep(RETRY_POLL)
         result = None if out is None else parse_scan(host, out)
         # Agents redraw constantly; only the session list and their states matter.
         seen = result and ([(s.name, s.path) for s in result[0]], result[1])
